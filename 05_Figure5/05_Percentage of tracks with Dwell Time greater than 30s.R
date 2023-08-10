@@ -93,6 +93,7 @@ Cell_Summary_by_Track <- Table %>%
     IMAGE,
     COHORT,
     SHORT_LABEL,
+    ORDER_NUMBER,
     CELL
   ) %>%
   summarise(
@@ -117,13 +118,17 @@ Cell_Summary_by_Track <- Table %>%
       SHORT_LABEL == "Kinase Inhibitor 500 nM" ~ 24
     )
   ) %>% 
+  arrange(
+    ORDER_NUMBER,
+    IMAGE
+  ) %>% 
   as.data.table()
 
 
 Cell_Summary_by_Track$SHORT_LABEL <- 
   factor(
     Cell_Summary_by_Track$SHORT_LABEL,
-    levels = c("DMSO", "Kinase Inhibitor 20 uM", "Kinase Inhibitor 500 nM")
+    levels = c("DMSO", "Kinase Inhibitor 500 nM", "Kinase Inhibitor 20 uM")
   )
 
 # Summary by Images -------------------------------------------------------
@@ -133,17 +138,21 @@ Cell_Summary_by_Image <- Cell_Summary_by_Track %>%
     IMAGE,
     COHORT,
     SHORT_LABEL,
+    ORDER_NUMBER,
     VIOLIN_SHAPE
   ) %>% 
   summarise(
     DWELL_TIME_MEDIAN = median(MEAN_DWELL_TIME_TEST),
     DWELL_TIME_MEAN = mean(MEAN_DWELL_TIME_TEST)
+  ) %>% 
+  arrange(
+    ORDER_NUMBER
   )
 
 Cell_Summary_by_Image$SHORT_LABEL <- 
   factor(
     Cell_Summary_by_Image$SHORT_LABEL,
-    levels = c("DMSO", "Kinase Inhibitor 20 uM", "Kinase Inhibitor 500 nM")
+    levels = c("DMSO", "Kinase Inhibitor 500 nM", "Kinase Inhibitor 20 uM")
   )
 
 
@@ -165,7 +174,7 @@ df_p_val_DMSOvsKI20uM <- data.frame(
   group1 = "DMSO",
   group2 = "Kinase Inhibitor 20 uM",
   label = p_value_Result,
-  y.position = 25.5
+  y.position = 27.5
 )
 
 ### Kinase Inhibitor 20 uM vs Kinase Inhibitor 500 nM
@@ -205,7 +214,7 @@ df_p_val_DMSOvsKI500nM <- data.frame(
   group1 = "DMSO",
   group2 = "Kinase Inhibitor 500 nM",
   label = p_value_Result,
-  y.position = 27.5
+  y.position = 25.5
 )
 
 rm(
@@ -233,7 +242,8 @@ Plot_Table_by_Cohort <- Cell_Summary_by_Track %>%
   ungroup() %>% 
   group_by(
     SHORT_LABEL,
-    COHORT
+    COHORT,
+    ORDER_NUMBER
   ) %>%
   summarise(
     TOTAL_NUMBER_OF_IMAGES = mean(TOTAL_NUMBER_OF_IMAGES),
@@ -242,6 +252,9 @@ Plot_Table_by_Cohort <- Cell_Summary_by_Track %>%
     MEAN_DWELL_TIME = mean(MEAN_DWELL_TIME_TEST),
     YMAX_DWELL_TIME_TEST = MEAN_DWELL_TIME + STANDARD_ERROR_OF_DWELL_TIME,
     YMIN_DWELL_TIME_TEST = MEAN_DWELL_TIME - STANDARD_ERROR_OF_DWELL_TIME,
+  ) %>% 
+  arrange(
+    ORDER_NUMBER
   )
 
 

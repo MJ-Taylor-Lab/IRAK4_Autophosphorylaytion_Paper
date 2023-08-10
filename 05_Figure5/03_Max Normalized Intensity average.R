@@ -26,6 +26,7 @@ Cell_Summary_by_Track <- Table %>%
     IMAGE,
     COHORT,
     SHORT_LABEL,
+    ORDER_NUMBER
   ) %>% 
   summarise(
     MAX_NORMALIZED_INTENSITY = max(NORMALIZED_INTENSITY),
@@ -45,12 +46,16 @@ Cell_Summary_by_Track <- Table %>%
       SHORT_LABEL == "Kinase Inhibitor 500 nM" ~ 24
     )
   ) %>% 
+  arrange(
+    ORDER_NUMBER,
+    UNIVERSAL_TRACK_ID
+  ) %>% 
   as.data.table()
 
 Cell_Summary_by_Track$SHORT_LABEL <- 
   factor(
     Cell_Summary_by_Track$SHORT_LABEL,
-    levels = c("DMSO", "Kinase Inhibitor 20 uM", "Kinase Inhibitor 500 nM")
+   levels = c("DMSO", "Kinase Inhibitor 500 nM", "Kinase Inhibitor 20 uM")
   )
 
 #### Image Summary
@@ -59,12 +64,17 @@ Cell_Summary_by_Image <- Cell_Summary_by_Track %>%
     IMAGE,
     COHORT,
     SHORT_LABEL,
+    ORDER_NUMBER,
     VIOLIN_SHAPE,
     VIOLIN_COLOR
   ) %>% 
   summarise(
     MAX_NORMALIZED_INTENSITY_MEDIAN = median(MAX_NORMALIZED_INTENSITY),
     MAX_NORMALIZED_INTENSITY_MEAN = mean(MAX_NORMALIZED_INTENSITY)
+  ) %>% 
+  arrange(
+    ORDER_NUMBER,
+    SHORT_LABEL
   )
 
 #### Cohort Summary
@@ -86,7 +96,8 @@ Cell_Summary_by_Cohort <- Cell_Summary_by_Track %>%
   ungroup() %>% 
   group_by(
     SHORT_LABEL,
-    COHORT
+    COHORT,
+    ORDER_NUMBER
   ) %>%
   summarise(
     TOTAL_NUMBER_OF_IMAGES = mean(TOTAL_NUMBER_OF_IMAGES),
@@ -104,7 +115,11 @@ Cell_Summary_by_Cohort <- Cell_Summary_by_Track %>%
       SHORT_LABEL == "DMSO" ~ "orange",
       TRUE ~ "lightblue"
     )
-  ) 
+  ) %>% 
+  arrange(
+    ORDER_NUMBER,
+    SHORT_LABEL
+  )
 
 # t-test ------------------------------------------------------------------
 ### DMSO vs Kinase Inhibitor 20 uM
@@ -124,7 +139,7 @@ df_p_val_DMSOvsKI20uM <- data.frame(
   group1 = "DMSO",
   group2 = "Kinase Inhibitor 20 uM",
   label = p_value_Result,
-  y.position = 27.5
+  y.position = 30.5
 )
 
 ### Kinase Inhibitor 20 uM vs Kinase Inhibitor 500 nM
@@ -164,14 +179,13 @@ df_p_val_DMSOvsKI500nM <- data.frame(
   group1 = "DMSO",
   group2 = "Kinase Inhibitor 500 nM",
   label = p_value_Result,
-  y.position = 30.5
+  y.position = 27.5
 )
 
 rm(
   p_value_Result,
   p_value_Result_MyD88
 ) 
-
 
 
 # ggplot ------------------------------------------------------------------

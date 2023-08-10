@@ -1,5 +1,5 @@
 # Creating Folder to save Max Normalised Intenisty Plots
-Plot_Directory_Save_Path_Sub_Dir <- file.path(Plot_Directory_Save_Path, "01_Max Normalised Intensity IRAK1 Lifetime Greater Than 50s for Single Replicate")
+Plot_Directory_Save_Path_Sub_Dir <- file.path(Plot_Directory_Save_Path, "02_Max Normalised Intensity IRAK4 Lifetime Greater Than 50s")
 if(!file.exists(Plot_Directory_Save_Path_Sub_Dir)){
   dir.create(Plot_Directory_Save_Path_Sub_Dir)
 }
@@ -33,15 +33,6 @@ Cell_Summary_by_Track <- Table %>%
   mutate(
     MAX_NORMALIZED_INTENSITY_BIN = round(MAX_NORMALIZED_INTENSITY)
   ) %>% 
-  mutate(
-    IMAGE_REMOVAL = case_when(
-      IMAGE == "20230414 plate01_well5C_5nM_cl082_MyD88_IRAK1_DMSO_001" | IMAGE == "20230414 plate01_well2C_5nM_cl082_MyD88_IRAK1_inhi20um_001" | IMAGE == "20230414 plate01_well3B_5nM_cl082_MyD88_IRAK1_inhi500nm_001" ~ 1,
-      TRUE ~ 0
-    )
-  ) %>% 
-  filter(
-    IMAGE_REMOVAL == 1
-  ) %>% 
   ungroup() %>% 
   arrange(
     ORDER_NUMBER,
@@ -52,11 +43,42 @@ Cell_Summary_by_Track <- Table %>%
 Cell_Summary_by_Track$SHORT_LABEL <- 
   factor(
     Cell_Summary_by_Track$SHORT_LABEL,
-    levels = c("DMSO", "Kinase Inhibitor 500 nM", "Kinase Inhibitor 20 uM")
+    levels = c("IRAK4 WT", "IRAK4 KD", "IRAK4 DelKDo")
+  )
+
+#### Image Summary
+Cell_Summary_by_Image <- Cell_Summary_by_Track %>% 
+  group_by(
+    IMAGE,
+    COHORT,
+    SHORT_LABEL,
+    ORDER_NUMBER
+  ) %>% 
+  summarise(
+    MAX_NORMALIZED_INTENSITY_MEDIAN = median(MAX_NORMALIZED_INTENSITY),
+    MAX_NORMALIZED_INTENSITY_MEAN = mean(MAX_NORMALIZED_INTENSITY)
+  ) %>% 
+  arrange(
+    ORDER_NUMBER,
+    SHORT_LABEL
   )
 
 #### Protien-Cohort Summary
 Cell_Summary_by_Cohort <- Cell_Summary_by_Track %>% 
+  arrange(
+    SHORT_LABEL,
+    IMAGE
+  ) %>% 
+  transform(
+    ID_COHORT = as.numeric(factor(SHORT_LABEL))
+  ) %>% 
+  group_by(
+    ID_COHORT
+  ) %>% 
+  mutate(
+    ID_IMAGE = as.numeric(factor(IMAGE)),
+    TOTAL_NUMBER_OF_IMAGES = max(ID_IMAGE)
+  ) %>% 
   group_by(
     COHORT,
     SHORT_LABEL,
@@ -65,45 +87,44 @@ Cell_Summary_by_Cohort <- Cell_Summary_by_Track %>%
   mutate(
     MAX_NORMALIZED_INTENSITY_BIN_MAX = n()
   ) %>%
-  ungroup() %>%
+  ungroup() %>% 
   group_by(
-    COHORT,
     SHORT_LABEL,
+    COHORT,
     ORDER_NUMBER
-  ) %>% 
+  ) %>%
   summarise(
+    TOTAL_NUMBER_OF_IMAGES = mean(TOTAL_NUMBER_OF_IMAGES),
     MAX_NORMALIZED_INTENSITY_MEAN = mean(MAX_NORMALIZED_INTENSITY),
-    SEM = sd(MAX_NORMALIZED_INTENSITY)/1,
+    SEM = sd(MAX_NORMALIZED_INTENSITY)/TOTAL_NUMBER_OF_IMAGES,
     
     MAX_NORMALIZED_INTENSITY_BIN_MAX = max(MAX_NORMALIZED_INTENSITY_BIN_MAX),
     Y_POSITION = MAX_NORMALIZED_INTENSITY_BIN_MAX/2,
-    
+  ) %>% 
+  mutate(
     XMIN_MEAN = MAX_NORMALIZED_INTENSITY_MEAN - SEM,
     XMIN_MEAN = case_when(
       XMIN_MEAN < 0 ~ 0.75,
       TRUE ~ XMIN_MEAN
     ),
     XMAX_MEAN = MAX_NORMALIZED_INTENSITY_MEAN + SEM,
-    
-    MAX_NORMALIZED_INTENSITY_MEDIAN = median(MAX_NORMALIZED_INTENSITY)
-  ) %>% 
-  mutate(
     COLOR  = case_when(
-      SHORT_LABEL == "DMSO" ~ "orange",
-      TRUE ~ "lightblue"
+      SHORT_LABEL == "IRAK4 WT" ~ "orange",
+      SHORT_LABEL == "IRAK4 KD" ~ "lightblue",
+      TRUE ~ "darkblue"
     )
   ) %>% 
   arrange(
-    ORDER_NUMBER
-  ) %>% 
-  as.data.table()
+    ORDER_NUMBER,
+    SHORT_LABEL
+  )
 
 
 # Histogram Max Normalised Intensity --------------------------------------
 BINWIDTH = 1               #Histogram Bindwidth
 LOWER_LIMIT = 0           #Axis Lower Limit
-UPPER_LIMIT = 30       #Axis Upper Limit
-AXIS_BREAK_SEQ = 5        #X axis tick marks
+UPPER_LIMIT = 11       #Axis Upper Limit
+AXIS_BREAK_SEQ = 2        #X axis tick marks
 FACET_ROW_NUMBERS = 3     #Number of facet rows
 X_LABEL = "Max normalized intensity (a.u.)"
 Y_LABEL = "Count (a.u.)"
@@ -139,7 +160,7 @@ Plot <- ggplot(
     nrow = FACET_ROW_NUMBERS
   ) +
   scale_fill_manual(
-    values = c("orange", "lightblue", "lightblue")
+    values = c("orange", "lightblue", "darkblue")
   ) +
   labs(
     x = X_LABEL,
@@ -170,12 +191,12 @@ Plot +
   ) +
   annotate(
     "text", 
-    x = 13, 
-    y = 30,
+    x = 5, 
+    y = 200,
     label = paste0(
-      "DMSO Mean +/- SEM = ", signif(Cell_Summary_by_Cohort$MAX_NORMALIZED_INTENSITY_MEAN[1], digits = 4), " +/- ", signif(Cell_Summary_by_Cohort$SEM[1], digits = 4), "\n",
-      "PF06650883_500nM Mean +/- SEM = ", signif(Cell_Summary_by_Cohort$MAX_NORMALIZED_INTENSITY_MEAN[2], digits = 4), " +/- ", signif(Cell_Summary_by_Cohort$SEM[2], digits = 4), "\n",
-      "PF06650883_20uM Mean +/- SEM = ", signif(Cell_Summary_by_Cohort$MAX_NORMALIZED_INTENSITY_MEAN[3], digits = 4), " +/- ", signif(Cell_Summary_by_Cohort$SEM[3], digits = 4)
+      "IRAK4 WT Mean +/- SEM = ", signif(Cell_Summary_by_Cohort$MAX_NORMALIZED_INTENSITY_MEAN[1], digits = 4), " +/- ", signif(Cell_Summary_by_Cohort$SEM[1], digits = 4), "\n",
+      "IRAK4 KD Mean +/- SEM = ", signif(Cell_Summary_by_Cohort$MAX_NORMALIZED_INTENSITY_MEAN[2], digits = 4), " +/- ", signif(Cell_Summary_by_Cohort$SEM[2], digits = 4), "\n",
+      "IRAK4 DelKDo Mean +/- SEM = ", signif(Cell_Summary_by_Cohort$MAX_NORMALIZED_INTENSITY_MEAN[3], digits = 4), " +/- ", signif(Cell_Summary_by_Cohort$SEM[3], digits = 4)
     ),
     color="black",
     size=3
@@ -188,7 +209,7 @@ Plot +
     strip.text.x = element_text(size = 15)
   )
 
-Plot_Save_Path_1 <- "01_Max Normalized Intensity IRAK1 Histogram with mean and SEM.pdf"
+Plot_Save_Path_1 <- "01_Max Normalized Intensity IRAK4 Histogram with mean and SEM.pdf"
 Plot_Save_Path <- file.path(Plot_Directory_Save_Path_Sub_Dir, Plot_Save_Path_1)
 ggsave(
   Plot_Save_Path,
@@ -210,13 +231,13 @@ Plot +
     panel.background = element_blank()
   )
 
-Plot_Save_Path_1 <- "02_Max Normalized Intensity IRAK1 Histogram without mean, SEM and no facet labels.pdf"
+Plot_Save_Path_1 <- "02_Max Normalized Intensity IRAK4 Histogram without mean, SEM and no facet labels.pdf"
 Plot_Save_Path <- file.path(Plot_Directory_Save_Path_Sub_Dir, Plot_Save_Path_1)
 ggsave(
   Plot_Save_Path,
   plot = last_plot(),
-  height = 45,
-  width = 35,
+  height = 40,
+  width = 30,
   units = "mm"
 )
 
@@ -225,6 +246,7 @@ ggsave(
 rm(
   Cell_Summary_by_Cohort,
   Cell_Summary_by_Track,
+  Cell_Summary_by_Image,
   Plot,
   BINWIDTH,
   LOWER_LIMIT,

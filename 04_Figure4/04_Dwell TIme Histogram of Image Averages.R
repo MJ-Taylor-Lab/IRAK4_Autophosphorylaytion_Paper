@@ -1,5 +1,5 @@
 # Dwell Time Table Separation
-Plot_Directory_Save_Path_Sub_Dir <- file.path(Plot_Directory_Save_Path, "01_Dwell Time for Single Replicate")
+Plot_Directory_Save_Path_Sub_Dir <- file.path(Plot_Directory_Save_Path, "01_Dwell Time Average")
 if(!file.exists(Plot_Directory_Save_Path_Sub_Dir)){
   dir.create(Plot_Directory_Save_Path_Sub_Dir)
 }
@@ -56,17 +56,8 @@ Cell_Summary_by_Track<-
     DWELL_FRAMES >= 2 #I want to look at transient recruitment events so dwell frame of 2 implies 3 contionous frames is interesting for me, different cutoffs are prbly useful
   ) %>% 
   mutate(
-    IMAGE_REMOVAL = case_when(
-      IMAGE == "20230414 plate01_well5C_5nM_cl082_MyD88_IRAK1_DMSO_001" | IMAGE == "20230414 plate01_well2C_5nM_cl082_MyD88_IRAK1_inhi20um_001" | IMAGE == "20230414 plate01_well3B_5nM_cl082_MyD88_IRAK1_inhi500nm_001" ~ 1,
-      TRUE ~ 0
-    )
-  ) %>% 
-  mutate(
     DWELL_TIME_BIN = round(DWELL_TIME)
-  ) %>% 
-  filter(
-    IMAGE_REMOVAL == 1
-  ) %>% 
+  ) %>%
   arrange(
     ORDER_NUMBER,
     UNIVERSAL_TRACK_ID
@@ -77,7 +68,7 @@ Cell_Summary_by_Track<-
 Cell_Summary_by_Track$SHORT_LABEL <- 
   factor(
     Cell_Summary_by_Track$SHORT_LABEL,
-    levels = c("DMSO", "Kinase Inhibitor 500 nM", "Kinase Inhibitor 20 uM")
+    levels = c("IRAK4 WT", "IRAK4 KD", "IRAK4 DelKDo")
   )
 
 
@@ -85,6 +76,7 @@ Cell_Summary_by_Track$SHORT_LABEL <-
 #### Protien-Image Summary
 Cell_Summary_by_Image <- Cell_Summary_by_Track %>% 
   group_by(
+    IMAGE,
     COHORT,
     SHORT_LABEL,
     ORDER_NUMBER
@@ -100,57 +92,71 @@ Cell_Summary_by_Image <- Cell_Summary_by_Track %>%
 Cell_Summary_by_Image$SHORT_LABEL <- 
   factor(
     Cell_Summary_by_Image$SHORT_LABEL,
-    levels = c("DMSO", "Kinase Inhibitor 500 nM", "Kinase Inhibitor 20 uM")
+    levels = c("IRAK4 WT", "IRAK4 KD", "IRAK4 DelKDo")
   )
 
 
 
 # Cohort Summary ----------------------------------------------------------
 Cell_Summary_by_Cohort <- Cell_Summary_by_Track %>% 
+  arrange(
+    SHORT_LABEL,
+    IMAGE
+  ) %>% 
+  transform(
+    ID_COHORT = as.numeric(factor(SHORT_LABEL))
+  ) %>% 
+  group_by(
+    ID_COHORT
+  ) %>% 
+  mutate(
+    ID_IMAGE = as.numeric(factor(IMAGE)),
+    TOTAL_NUMBER_OF_IMAGES = max(ID_IMAGE)
+  ) %>% 
   group_by(
     COHORT,
     SHORT_LABEL,
     DWELL_TIME_BIN
-  ) %>% 
+  ) %>%
   mutate(
     DWELL_TIME_BIN_MAX = n()
-  ) %>% 
-  ungroup() %>%
+  ) %>%
+  ungroup() %>% 
   group_by(
-    COHORT,
     SHORT_LABEL,
+    COHORT,
     ORDER_NUMBER
-  ) %>% 
+  ) %>%
   summarise(
+    TOTAL_NUMBER_OF_IMAGES = mean(TOTAL_NUMBER_OF_IMAGES),
     DWELL_TIME_MEAN = mean(DWELL_TIME),
-    SEM = sd(DWELL_TIME)/1,
+    SEM = sd(DWELL_TIME)/TOTAL_NUMBER_OF_IMAGES,
     
     DWELL_TIME_BIN_MAX = max(DWELL_TIME_BIN_MAX),
     Y_POSITION = DWELL_TIME_BIN_MAX/2,
-    
+  ) %>% 
+  mutate(
     XMIN_MEAN = DWELL_TIME_MEAN - SEM,
     XMIN_MEAN = case_when(
       XMIN_MEAN < 0 ~ 0.75,
       TRUE ~ XMIN_MEAN
     ),
     XMAX_MEAN = DWELL_TIME_MEAN + SEM,
-    
-    DWELL_TIME_MEDIAN = median(DWELL_TIME)
-  ) %>% 
-  mutate(
     COLOR  = case_when(
-      SHORT_LABEL == "DMSO" ~ "orange",
-      TRUE ~ "lightblue"
+      SHORT_LABEL == "IRAK4 WT" ~ "orange",
+      SHORT_LABEL == "IRAK4 KD" ~ "lightblue",
+      TRUE ~ "darkblue"
     )
   ) %>% 
   arrange(
-    ORDER_NUMBER
-  ) 
-
+    ORDER_NUMBER,
+    SHORT_LABEL
+  )
+  
 Cell_Summary_by_Cohort$SHORT_LABEL <- 
   factor(
     Cell_Summary_by_Cohort$SHORT_LABEL,
-    levels = c("DMSO", "Kinase Inhibitor 500 nM", "Kinase Inhibitor 20 uM")
+    levels = c("IRAK4 WT", "IRAK4 KD", "IRAK4 DelKDo")
   )
 
 
@@ -194,7 +200,7 @@ Plot <- ggplot(
     nrow = FACET_ROW_NUMBERS
   ) +
   scale_fill_manual(
-    values = c("orange", "lightblue", "lightblue")
+    values = c("orange", "lightblue", "darkblue")
   ) +
   labs(
     x = X_LABEL,
@@ -228,9 +234,9 @@ Plot +
     x = 40, 
     y = 100,
     label = paste0(
-      "DMSO Mean +/- SD = ", signif(Cell_Summary_by_Cohort$DWELL_TIME_MEAN[1], digits = 4), " +/- ", signif(Cell_Summary_by_Cohort$SEM[1], digits = 4), "\n",
-      "PF06650883_500nM Mean +/- SD = ", signif(Cell_Summary_by_Cohort$DWELL_TIME_MEAN[2], digits = 4), " +/- ", signif(Cell_Summary_by_Cohort$SEM[2], digits = 4), "\n",
-      "PF06650883_20uM Mean +/- SD = ", signif(Cell_Summary_by_Cohort$DWELL_TIME_MEAN[3], digits = 4), " +/- ", signif(Cell_Summary_by_Cohort$SEM[3], digits = 4)
+      "IRAK4 WT Mean +/- SD = ", signif(Cell_Summary_by_Cohort$DWELL_TIME_MEAN[1], digits = 4), " +/- ", signif(Cell_Summary_by_Cohort$SEM[1], digits = 4), "\n",
+      "IRAK4 KD Mean +/- SD = ", signif(Cell_Summary_by_Cohort$DWELL_TIME_MEAN[2], digits = 4), " +/- ", signif(Cell_Summary_by_Cohort$SEM[2], digits = 4), "\n",
+      "IRAK4 DelKDo Mean +/- SD = ", signif(Cell_Summary_by_Cohort$DWELL_TIME_MEAN[3], digits = 4), " +/- ", signif(Cell_Summary_by_Cohort$SEM[3], digits = 4)
     ),
     color="black",
     size=3
@@ -270,8 +276,8 @@ Plot_Save_Path <- file.path(Plot_Directory_Save_Path_Sub_Dir, Plot_Save_Path_1)
 ggsave(
   Plot_Save_Path,
   plot = last_plot(),
-  height = 45,
-  width = 35,
+  height = 40,
+  width = 30,
   units = "mm"
 )
 

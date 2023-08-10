@@ -101,7 +101,7 @@ Cell_Summary_by_Track<-
 Cell_Summary_by_Track$SHORT_LABEL <- 
   factor(
     Cell_Summary_by_Track$SHORT_LABEL,
-    levels = c("DMSO", "Kinase Inhibitor 500 nM", "Kinase Inhibitor 20 uM")
+    levels = c("IRAK4 WT", "IRAK4 KD", "IRAK4 DelKDo")
   )
 
 
@@ -199,28 +199,32 @@ Colocalisation_Fx <- function(Count){
     ungroup() %>% 
     mutate(
       VIOLIN_COLOR = case_when(
-        SHORT_LABEL == "DMSO" ~ "orange",
-        SHORT_LABEL == "Kinase Inhibitor 20 uM" ~ "lightblue",
-        SHORT_LABEL == "Kinase Inhibitor 500 nM" ~ "lightblue"
+        SHORT_LABEL == "IRAK4 WT" ~ "orange",
+        SHORT_LABEL == "IRAK4 KD" ~ "lightblue",
+        SHORT_LABEL == "IRAK4 DelKDo" ~ "darkblue"
       ),
       VIOLIN_SHAPE = case_when(
-        SHORT_LABEL == "DMSO" ~ 21,
-        SHORT_LABEL == "Kinase Inhibitor 20 uM" ~ 22,
-        SHORT_LABEL == "Kinase Inhibitor 500 nM" ~ 24
+        SHORT_LABEL == "IRAK4 WT" ~ 21,
+        SHORT_LABEL == "IRAK4 KD" ~ 22,
+        SHORT_LABEL == "IRAK4 DelKDo" ~ 24
       )
+    ) %>% 
+    arrange(
+      ORDER_NUMBER,
+      IMAGE
     ) %>% 
     as.data.table()
   
   Colocalisation_Percentage_byCell$SHORT_LABEL <- 
     factor(
       Colocalisation_Percentage_byCell$SHORT_LABEL,
-      levels = c("DMSO", "Kinase Inhibitor 500 nM", "Kinase Inhibitor 20 uM")
+      levels = c("IRAK4 WT", "IRAK4 KD", "IRAK4 DelKDo")
     )
   
   Colocalisation_Percentage_byCell$VIOLIN_COLOR <- 
     factor(
       Colocalisation_Percentage_byCell$VIOLIN_COLOR,
-      levels = c("orange", "lightblue")
+      levels = c("orange", "lightblue", "darkblue")
     )
   
   # Colocalisation by Image
@@ -245,7 +249,7 @@ Colocalisation_Fx <- function(Count){
   ### DMSO vs Kinase Inhibitor 20 uM
   p_value_Result <- Colocalisation_Percentage_byImage %>% 
     filter(
-      SHORT_LABEL != "Kinase Inhibitor 500 nM"
+      SHORT_LABEL != "IRAK4 KD"
     )
   
   p_value_Result_MyD88 <- wilcox.test(
@@ -256,8 +260,8 @@ Colocalisation_Fx <- function(Count){
   p_value_Result <- signif(p_value_Result_MyD88, digits = 3)
   
   df_p_val_DMSOvsKI20uM <- data.frame(
-    group1 = "DMSO",
-    group2 = "Kinase Inhibitor 20 uM",
+    group1 = "IRAK4 WT",
+    group2 = "IRAK4 DelKDo",
     label = p_value_Result,
     y.position = 30.5
   )
@@ -265,7 +269,7 @@ Colocalisation_Fx <- function(Count){
   ### Kinase Inhibitor 20 uM vs Kinase Inhibitor 500 nM
   p_value_Result <- Colocalisation_Percentage_byImage %>% 
     filter(
-      SHORT_LABEL != "DMSO"
+      SHORT_LABEL != "IRAK4 DelKDo"
     )
   
   p_value_Result_MyD88 <- wilcox.test(
@@ -276,8 +280,8 @@ Colocalisation_Fx <- function(Count){
   p_value_Result <- signif(p_value_Result_MyD88, digits = 3)
   
   df_p_val_KI20uMvsKI500nM <- data.frame(
-    group1 = "Kinase Inhibitor 20 uM",
-    group2 = "Kinase Inhibitor 500 nM",
+    group1 = "IRAK4 WT",
+    group2 = "IRAK4 KD",
     label = p_value_Result,
     y.position = 27.5
   )
@@ -285,7 +289,7 @@ Colocalisation_Fx <- function(Count){
   ### DMSO vs Kinase Inhibitor 500 nM
   p_value_Result <- Colocalisation_Percentage_byImage %>% 
     filter(
-      SHORT_LABEL != "Kinase Inhibitor 20 uM"
+      SHORT_LABEL != "IRAK4 WT"
     )
   
   p_value_Result_MyD88 <- wilcox.test(
@@ -296,8 +300,8 @@ Colocalisation_Fx <- function(Count){
   p_value_Result <- signif(p_value_Result_MyD88, digits = 3)
   
   df_p_val_DMSOvsKI500nM <- data.frame(
-    group1 = "DMSO",
-    group2 = "Kinase Inhibitor 500 nM",
+    group1 = "IRAK4 DelKDo",
+    group2 = "IRAK4 KD",
     label = p_value_Result,
     y.position = 27.5
   )
@@ -357,7 +361,7 @@ Colocalisation_Fx <- function(Count){
       alpha = 0.5
     ) +
     scale_fill_manual(
-      values=c("orange", "lightblue", "lightblue")
+      values=c("orange", "lightblue", "darkblue")
     ) +
     geom_segment(
       aes(
