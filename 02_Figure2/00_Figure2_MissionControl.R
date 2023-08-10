@@ -53,9 +53,9 @@ if(!file.exists(Plot_Directory_Save_Path)){
 Plot_Script_Sub_Directory <- file.path(Plot_Script_Directory, "02_Figure2")
 
 ScriptList <- c(
-  "01_SpotCount_MyD88_IRAK4_pIRAK4.R"# MNumber of MyD88-IRAK4-pIRAK4 colocalised tracks.R
+  "02_SpotCount_MyD88_IRAK1_pIRAK4.R"# MNumber of MyD88-IRAK1-pIRAK4 colocalised tracks.R
 )
-# Command
+# Commands
 for(x in 1:length(ScriptList)){
   tryCatch({
     print(paste("::::::::::::::::::::", x, "::::::::::::::::::::"))
