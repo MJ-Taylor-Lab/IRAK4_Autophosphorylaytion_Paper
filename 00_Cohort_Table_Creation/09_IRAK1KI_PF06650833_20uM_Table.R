@@ -35,6 +35,7 @@ rm(
   Table3
 )
 
+# Table -------------------------------------------------------------------
 Table <- Table %>%  as.data.table()
 Table <- Table %>% 
   filter(

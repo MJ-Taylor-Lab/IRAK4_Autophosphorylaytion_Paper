@@ -29,6 +29,8 @@ rm(
 )
 
 Table <- Table %>%  as.data.table()
+
+# Table creation ----------------------------------------------------------
 Table <- Table %>% 
   filter(
     COHORT == "IRAK4KI+PF06650833_20uM"
