@@ -4,7 +4,7 @@ pacman::p_load(dplyr, tidyr, data.table, ggplot2, ggprism, lemon, ggforce)
 Table1 <- fread("/Users/u_niranjan/Desktop/Git Scripts/00_Myddosomal_internal_phosphorylation_cohort_table/01_IRAK4KI_Compiled_Essential.csv.gz")
 Table2 <- fread("/Users/u_niranjan/Desktop/Git Scripts/00_Myddosomal_internal_phosphorylation_cohort_table/02_IRAK1KI_Compiled_Essential.csv.gz")
 
-Plot_Directory_Save_Path <- "/Users/u_niranjan/Desktop/Possible paper figure/Git Figure_20230807" # Where to save Images
+Plot_Directory_Save_Path <- "/Users/u_niranjan/Desktop/Possible paper figure/Git Figure_20230925" # Where to save Images
 Plot_Script_Directory <- "/Users/u_niranjan/Desktop/Git Scripts/A_Myddosomal_internal_phosphorylation_cascade_regulates_assembly" #Where Plot Scripts are are
 
 Table <- rbind(

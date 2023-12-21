@@ -1,12 +1,12 @@
 library(pacman)
 pacman::p_load(data.table, tidyr, dplyr, ggplot2,interleave)
 
-Input_Table <- fread("/Users/u_niranjan/Desktop/Git Scripts/A_Myddosomal_internal_phosphorylation_cascade_regulates_assembly/10_SupplementaryFigure1/20230607/20230607_1/TablestoAnalyse.csv")
-Output_Directory <- "/Users/u_niranjan/Desktop/Git Scripts/A_Myddosomal_internal_phosphorylation_cascade_regulates_assembly/10_SupplementaryFigure1/20230607/20230607_1"
+Input_Table <- fread("/Users/u_niranjan/Desktop/Possible paper figure/Git Figure_20231213/12_Supplementary Figure 2/20230607/20230607_1/TablestoAnalyse.csv")
+Output_Directory <- "/Users/u_niranjan/Desktop/Possible paper figure/Git Figure_20231213/12_Supplementary Figure 2/20230607/20230607_1"
 
 Dilution_Factor <- 5
 
-Cohort_Order_Table_Path <- "/Users/u_niranjan/Desktop/Git Scripts/A_Myddosomal_internal_phosphorylation_cascade_regulates_assembly/10_SupplementaryFigure1/20230607/20230607_1/CohortOrder.csv" #Put nonsense string if you dont want order 
+Cohort_Order_Table_Path <- "/Users/u_niranjan/Desktop/Possible paper figure/Git Figure_20231213/12_Supplementary Figure 2/20230607/20230607_1/CohortOrder.csv" #Put nonsense string if you dont want order 
 if(file.exists(Cohort_Order_Table_Path)){
   Cohort_Order_Table <- read.csv(Cohort_Order_Table_Path, header = FALSE)
   Cohort_Order_Table <- Cohort_Order_Table %>% as.vector()
@@ -695,4 +695,88 @@ ggsave(
   width = 60,
   units = "mm"
 )
+
+
+# Seperating Table by CellLine No Treatment--------------------------------------------
+PlateSummarybyDay_CellLine <- PlateSummarybyDay %>% 
+  filter(
+    Treatment_Condition_short == "WT" | Treatment_Condition_short == "IRAK4KI" | Treatment_Condition_short == "IRAK1KI"
+  )
+
+PlateSummarybyTreatment_Condition_CellLine <- PlateSummarybyTreatment_Condition %>% 
+  filter(
+    # Treatment_Condition_short == "IRAK4KI" | 
+    Treatment_Condition_short == "WT" | Treatment_Condition_short == "IRAK4KI" | Treatment_Condition_short == "IRAK1KI"
+  ) %>% 
+  mutate(
+    COLOR = case_when(
+      # Treatment_Condition_short == "IRAK4KI" ~ "#FCCC33",  #yellowish orange,
+      Treatment_Condition_short == "WT" ~ "orange",
+      Treatment_Condition_short == "IRAK4KI" ~ "gold2",# greenish lightblue
+      Treatment_Condition_short == "IRAK1KI" ~ "gold4" 
+    )
+  )
+
+
+ggplot(
+  data = PlateSummarybyTreatment_Condition_CellLine,
+  aes(
+    x = Treatment_Condition_short,
+    y = Unstimulated_by_Stimulated
+  )
+) +
+  geom_bar(
+    stat = "identity",
+    fill = PlateSummarybyTreatment_Condition_CellLine$COLOR,
+    color = "black",
+    width = 0.6,
+  ) +
+  geom_errorbar(
+    data = PlateSummarybyTreatment_Condition_CellLine,
+    aes(
+      x = Treatment_Condition_short,
+      ymin = Unstimulated_by_Stimulated - Ratio_sd,
+      ymax = Unstimulated_by_Stimulated + Ratio_sd
+    ),
+    width = 0.4,
+    linewidth = 0.4
+  ) +
+  geom_point(
+    data = PlateSummarybyDay_CellLine,
+    aes(
+      x = Treatment_Condition_short,
+      y = Unstimulated_by_Stimulated
+    ),
+    size = 1,
+    shape = 21,
+    fill = "grey",
+    alpha = 0.8,
+    position = position_jitter(0.05)
+  ) +
+  labs(
+    y = "IL-2 Fold Change\n(Stimulated/Unstimulated)"
+  ) +
+  scale_y_continuous(
+    breaks = scales::pretty_breaks(n = 6)
+  ) +
+  theme_classic() +
+  theme(
+    axis.text = element_text(size = 5),
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(size = 6)
+  )
+
+Plot_Save <- file.path(Output_Directory, "05_Fold_Change_IL2_Unstimulated_to_Stimulated_NoTreatment.pdf")
+ggsave(
+  Plot_Save,
+  plot = last_plot(),
+  height = 35,
+  width = 60,
+  units = "mm"
+)
+
+
+
+# Cleanup -----------------------------------------------------------------
+rm(list = ls())
 

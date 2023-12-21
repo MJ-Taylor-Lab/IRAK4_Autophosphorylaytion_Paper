@@ -5,13 +5,15 @@ Table1 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/Analysis Output/
 Table2 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/Analysis Output/20230727_IRAK4PhosphoPaper/06_IRAK4DeltaKinaseDomain/20220824/Output/Analysis.csv.gz")
 Table3 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/Analysis Output/20230727_IRAK4PhosphoPaper/06_IRAK4DeltaKinaseDomain/20220913/Output/Analysis.csv.gz")
 Table4 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/Analysis Output/20230727_IRAK4PhosphoPaper/06_IRAK4DeltaKinaseDomain/20230103/Output/Analysis.csv.gz")
+Table5 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/Analysis Output/20230727_IRAK4PhosphoPaper/06_IRAK4DeltaKinaseDomain/20231031/Output/Analysis.csv.gz")
 
 
 Table <- rbind(
   Table1,
   Table2,
   Table3,
-  Table4
+  Table4,
+  Table5
 )
 
 # Checking the max mean and median values to test if calibration failed --------
@@ -31,6 +33,10 @@ max(Table4$MAX_NORMALIZED_INTENSITY)
 median(Table4$MAX_NORMALIZED_INTENSITY)
 mean(Table4$MAX_NORMALIZED_INTENSITY)
 
+max(Table5$MAX_NORMALIZED_INTENSITY)
+median(Table5$MAX_NORMALIZED_INTENSITY)
+mean(Table5$MAX_NORMALIZED_INTENSITY)
+
 unique(Table$COHORT)
 unique(Table$PROTEIN)
 unique(Table$IMAGE)
@@ -40,7 +46,8 @@ rm(
   Table1,
   Table2,
   Table3,
-  Table4
+  Table4,
+  Table5
 )
 
 Table <- Table %>%  as.data.table()

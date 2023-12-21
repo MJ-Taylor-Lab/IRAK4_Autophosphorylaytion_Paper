@@ -5,7 +5,7 @@ Table1 <- fread("/Users/u_niranjan/Desktop/Git Scripts/00_Myddosomal_internal_ph
 Table2 <- fread("/Users/u_niranjan/Desktop/Git Scripts/00_Myddosomal_internal_phosphorylation_cohort_table/09_IRAK1KI_PF06650833_20uM_Compiled_Essential.csv.gz")
 Table3 <- fread("/Users/u_niranjan/Desktop/Git Scripts/00_Myddosomal_internal_phosphorylation_cohort_table/10_IRAK1KI_PF06650833_500nM_Compiled_Essential.csv.gz")
 
-Plot_Directory_Save_Path <- "/Users/u_niranjan/Desktop/Possible paper figure/Git Figure_20230807" # Where to save Images
+Plot_Directory_Save_Path <- "/Users/u_niranjan/Desktop/Possible paper figure/Git Figure_20231213" # Where to save Images
 Plot_Script_Directory <- "/Users/u_niranjan/Desktop/Git Scripts/A_Myddosomal_internal_phosphorylation_cascade_regulates_assembly" #Where Plot Scripts are are
 
 Table <- rbind(

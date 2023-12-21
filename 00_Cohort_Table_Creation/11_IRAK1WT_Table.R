@@ -2,9 +2,13 @@ library(pacman)
 pacman::p_load(dplyr, tidyr, data.table)
 
 Table1 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/Analysis Output/20221022/11_IRAK1WildType/20230823/Output/Analysis.csv.gz")
+Table2 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/Analysis Output/20221022/11_IRAK1WildType/20231031/Output/Analysis.csv.gz")
+Table3 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/Analysis Output/20221022/11_IRAK1WildType/20231113/Output/Analysis.csv.gz")
 
 Table <- rbind(
-  Table1
+  Table1,
+  Table2,
+  Table3
 )
 
 # Checking the max mean and median values to test if calibration failed --------
@@ -12,13 +16,23 @@ max(Table1$MAX_NORMALIZED_INTENSITY)
 median(Table1$MAX_NORMALIZED_INTENSITY)
 mean(Table1$MAX_NORMALIZED_INTENSITY)
 
+max(Table2$MAX_NORMALIZED_INTENSITY)
+median(Table2$MAX_NORMALIZED_INTENSITY)
+mean(Table2$MAX_NORMALIZED_INTENSITY)
+
+max(Table3$MAX_NORMALIZED_INTENSITY)
+median(Table3$MAX_NORMALIZED_INTENSITY)
+mean(Table3$MAX_NORMALIZED_INTENSITY)
+
 unique(Table$COHORT)
 unique(Table$PROTEIN)
 unique(Table$IMAGE)
 
 # Table Cleanup and save -----------------------------------------------------------
 rm(
-  Table1
+  Table1,
+  Table2,
+  Table3
 )
 
 Table <- Table %>%  as.data.table()

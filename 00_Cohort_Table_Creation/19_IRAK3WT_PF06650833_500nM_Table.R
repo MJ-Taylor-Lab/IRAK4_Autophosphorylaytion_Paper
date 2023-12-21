@@ -1,9 +1,9 @@
 library(pacman)
 pacman::p_load(dplyr, tidyr, data.table)
 
-Table1 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/Analysis Output/20221022/12_IRAK2WildType/20230823/Output/Analysis.csv.gz")
-Table2 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/Analysis Output/20221022/12_IRAK2WildType/20230827/Output/Analysis.csv.gz")
-Table3 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/Analysis Output/20221022/12_IRAK2WildType/20230831/Output/Analysis.csv.gz")
+Table1 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/Analysis Output/20221022/19_IRAK3WT_PF06650833_500nM/20231010/Output/Analysis.csv.gz")
+Table2 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/Analysis Output/20221022/19_IRAK3WT_PF06650833_500nM/20231013/Output/Analysis.csv.gz")
+Table3 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/Analysis Output/20221022/19_IRAK3WT_PF06650833_500nM/20231019/Output/Analysis.csv.gz")
 
 Table <- rbind(
   Table1,
@@ -38,10 +38,10 @@ rm(
 Table <- Table %>%  as.data.table()
 Table <- Table %>% 
   filter(
-    COHORT == "IRAK2WildType"
+    COHORT == "IRAK3WT+PF06650833_500nM"
   ) %>% 
   mutate(
-    SHORT_LABEL = "IRAK2 WT"
+    SHORT_LABEL = "Kinase Inhibitor 500 nM"
   ) %>% 
   group_by(
     UNIVERSAL_TRACK_ID
@@ -56,7 +56,7 @@ Table <- Table %>%
   ) %>%
   as.data.table()
 
-Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/00_Myddosomal_internal_phosphorylation_cohort_table/12_IRAK2WT_Compiled_Essential.csv.gz"
+Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/00_Myddosomal_internal_phosphorylation_cohort_table/19_IRAK3WT_PF06650833_500nM_Compiled_Essential.csv.gz"
 fwrite(Table, Table_path)
 
 
