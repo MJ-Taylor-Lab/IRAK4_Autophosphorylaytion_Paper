@@ -331,3 +331,53 @@ Press [CTRL] + [X] to close, then [Y] to save and type `submit_node.sh` to save 
 
 Paste `sbatch submit_node` to submit to SLURM
 
+
+
+
+
+
+# Pipeline Details
+## 1) nd2 to TIFF
+
+Nikon microscopy images of different channels and meta data are captured and stored in nd2 format. The first step converts each channel of image captured to a tiff file. Simultaneously meta data is extracted (Eg: laser wavelength used, exposure time, laser power, real time of each frame etc.) 
+
+## 2) Dark-current noise subtraction
+
+Camera noise was estimated by averaging several pictures with the
+camera shutter closed. The script identifies the most appropriate dark frame based on the exposure time and subtracts this dark frame image from the one to be analysed.
+
+
+## 3) Images for tracking protein paths
+
+A edge preserving technique called median filter subtraction is used to remove blur and create sharp puncta. A user supplied median value (25 pixels) is used by each pixel to create a box the specified size centered around itself. The median value in this box is calculated and assigned as a new value to the pixel creating a blurred imaged. The median blurred image is then subtracted from the dark frame subtracted image. This reduces the cytoplasmic noise accquired during imaging. This step is done for images of each channel. In order to counteract random pixel fluctations two filters were used 1) Then a time-independent median filter (3 pixels) was used to sharpen the puncta similar to the median filter above 2) A time-depndent process using moving averages was used.  The moving average filter is achived by grouping a set of frames (3 frames) together and finding the average value for each pixel. For multiple channels of images the images processed up to this point are added up. The image is now suitable for tracking puncta using trackmate in the later steps and is called tracking reference image. 
+
+
+## 4) Images for extracting protein intensities
+
+Similar to the previous step, the original image is dark-frame subtracted followed by subtraction of the median blurred image (25 pixels). This image is used for intenisty extraction and referred to as intensities reference image. This step is done for images of each channel.
+
+
+## 5) Cell Segemntation
+
+Marker calculation - A maximum instensity projection image is calculalted by selecting maximum brightness value at each pixel position using the intensities reference image. Contrast is adjusted by scaling intensities. Dimmest pixel value being set to 0 and highest value set to max value based on the bit rate of the image. Using this 2 images were created. One with a gaussian blur (15 pixels) and other one with a median blur (5 pixels). The median blurred image is subtracted from the gaussian blur to generate an image with the brightest spots. This image was then log transformed to generate a more uniform intensity. Puncta are made clearer by applying a median blur (3 pixels). Lastly, the image was thresholded using connected components labeling - a method for identifying blobs by looking at neighbouring pixels. Lastly image is made binary.
+Mask Caluculation - A mean instensity projection image is calculalted by selecting average brightness value at each pixel position using the intensities reference image. Contrast is adjusted by scaling intensities as above. Similarly gaussian blur (15 pixels) and median blur (5 pixels) pixels were created. However, the gaussian blur image dialtes when filter applied on a mean instensity projection image makiing dim regions brighter and vice versa. The median blurred image is subtracted from the gaussian blur image. A median blur (5 pixels) is applied. The image is log transformed and made binary.
+Next an algorithm called marker controlled watershed segmentation was used. The mask and marker images are used in this algorithm to determine the location of each cell. Each cell is then cropped and stored as a separate tiff file. Each cell folder contains an image of the cropped tracking reference image and intensity reference image.
+
+
+## 6) Tracking Puncta
+
+TrackMate is used to identify spots and track their position over time. Trackmate uses a Laplacian of Gausian (LoG) filter to identify spots in the tracking reference image of a single cell.  An alogrithm called Linear Assignment Problem (LAP) is used to calculated the trajectories of each puncta by doing a cost analysis. The coordinates are then stored as an xml file for each cell. Note: currently tracking reference is a combination of images from multiple channels because expect spots to be colocalised.  
+
+
+## 7) Intenisty extraction
+
+The coordinates containing xml file for each cell determined from the tracking reference image are extracted. Missing frame information for each track was approximated using the mean distance between the points prceeding and occuring after the missing event. With all the cooridnates available, around each spot a circular mask coordinates are calculated. This mask is then applied to the intensity reference image for the cell and intensity value is extracted for each spot at time point. The value extracted for each puncta for each time point is the sum of all pixels in the mask. This is done for all channels. Simultaneously meta data extracted in step 1 is combined with the intensity data and coordinate data to generate a analysis table. 
+
+## 8) Intenisty Normalisation
+
+Indiviual flurophores which are imaged as controls to estimate intensity of single flurophores undergo all steps of analysis above except step 5. The median intenisty is then extracted and for each image and set as the value of a single flurophore. Using parameters such as Power, Exposure, Angle (in radians), Direction, and Date the flurophore images are matched to the cell images that fit the these parameters the best. The intensity values of each spot of each channel at each time point is divded by the appropriate median flurophore intensity value to estimate the number of molecules within a puncta. 
+
+
+## 9) Parameter extraction
+
+Using the coordinates, time and intensity value of each puncta in each channel at each time for every track various parameters are caluculated like Max Normalised Intenisty, Lifetime of track, Start to Max Intensity etc. All of this information is saved as a csv.gz file for further analysis. 
