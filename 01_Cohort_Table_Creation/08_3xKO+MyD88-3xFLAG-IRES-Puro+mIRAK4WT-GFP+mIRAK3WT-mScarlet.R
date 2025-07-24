@@ -97,8 +97,9 @@ Table <- Table %>%
   ) %>%
   as.data.table()
 
+unique(Table$IMAGE)
 
-Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4_Autophosphorylaytion_Paper_Rewrite/00_Myddosomal_internal_phosphorylation_cohort_table/37_TKO+MyD88-3xFLAG-IRES-Puro_mIRAK4WT_mIRAK3WT.csv.gz"
+Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4 Phosphorylation Paper/00_Cohort_table/08_3xKO+MyD88-3xFLAG-IRES-Puro+mIRAK4WT-GFP+mIRAK3WT-mScarlet_Analysis.csv.gz"
 fwrite(Table, Table_path)
 
 rm(list = ls())

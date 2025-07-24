@@ -3,8 +3,8 @@ library(pacman)
 pacman::p_load(dplyr, tidyr, data.table)
 
 # Load data from two CSV files into separate tables
-Table1 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/Analysis Output/20230727_IRAK4PhosphoPaper/22_IRAK4DD_IRAK1WT/20231212/Output/Analysis.csv.gz")
-Table2 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/Analysis Output/20230727_IRAK4PhosphoPaper/22_IRAK4DD_IRAK1WT/20231219/Output/Analysis.csv.gz")
+Table1 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/cobra/Analysis Output/20230727_IRAK4PhosphoPaper/22_IRAK4DD_IRAK1WT/20231212/Output/Analysis.csv.gz")
+Table2 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/cobra/Analysis Output/20230727_IRAK4PhosphoPaper/22_IRAK4DD_IRAK1WT/20231219/Output/Analysis.csv.gz")
 
 # Combine the two tables into a single table
 Table <- rbind(
@@ -26,20 +26,44 @@ unique(Table$COHORT)
 unique(Table$PROTEIN)
 unique(Table$IMAGE)
 
-# Remove unnecessary objects
+# Table Cleanup and save -----------------------------------------------------------
 rm(
   Table1,
   Table2
 )
 
+# Selecting Cells Manually ----------------------------------------------------------
+# Define the unique IMAGE values with their corresponding counts
+image_values <- c(
+  rep("20231212 plate01_well3G_10nM_cl_D11_IRAK4DD_IRAK1WT_001", 18),
+  rep("20231219 plate01_well2B_10nM_cl_D11_IRAK4DD_IRAK1WT_001", 7),
+  rep("20231219 plate01_well3C_10nM_cl_D11_IRAK4DD_IRAK1WT_001", 4)
+)
 
-# Convert the combined table to data.table class --------------------------
+# Define the corresponding CELL values
+cell_values <- c(
+  1, 2, 3, 4, 6, 7, 9, 11, 13, 14, 15, 17, 18, 19, 23, 24, 28, 30,
+  1, 2, 5, 7, 10, 11, 13,
+  3, 4, 9, 10
+)
+
+# Create the Selection_Table data frame
+Selection_Table <- data.frame(
+  IMAGE = image_values,
+  CELL = cell_values
+)
+
+rm(
+  image_values,
+  cell_values
+)
+
+
+# Making Final Table ------------------------------------------------------
 Table <- Table %>%  as.data.table()
-
-# Filter data for a specific cohort and mutate column values
 Table <- Table %>% 
-  filter(
-    COHORT == "TKO+MyD88-3xFLAG+IRAK4DD+IRAK1WT"
+  inner_join(
+    Selection_Table, by = c("IMAGE", "CELL")
   ) %>% 
   mutate(
     SHORT_LABEL = "IRAK4 DD + IRAK1 WT"
@@ -56,6 +80,8 @@ Table <- Table %>%
     UNIVERSAL_SPOT_ID
   ) %>%
   as.data.table()
+
+unique(Table$IMAGE)
 
 
 # Define an exclusion list for incorrectly identified cells ---------------
@@ -115,7 +141,7 @@ Table <- Table %>%
   )
 
 # Save the processed table to a CSV file
-Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4_Autophosphorylaytion_Paper_Rewrite/00_Myddosomal_internal_phosphorylation_cohort_table/04_3xKO_MyD88-IRES-Puro_IRAK4DD_IRAK1WT_Compiled_Essential.csv.gz"
+Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4 Phosphorylation Paper/00_Cohort_table/04_3xKO+MyD88-3xFLAG-IRES-Puro+mIRAK4DD-GFP+mIRAK1WT-mScarlet_Analysis.csv.gz"
 fwrite(Table, Table_path)
 
 # Clean up
