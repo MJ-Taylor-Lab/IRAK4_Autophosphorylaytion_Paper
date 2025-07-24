@@ -1,14 +1,13 @@
 library(pacman)
 pacman::p_load(dplyr, tidyr, data.table)
 
-Table1 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/raven/Analysis_Output/IRAK4_Kinase_Paper_InProgress/68_IRAK2WT_PF06650833_2uM/20250703/Output/Analysis.csv.gz")
-Table2 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/raven/Analysis_Output/IRAK4_Kinase_Paper_InProgress/68_IRAK2WT_PF06650833_2uM/20250708/Output/Analysis.csv.gz")
+Table1 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/raven/Analysis_Output/IRAK4_Kinase_Paper_InProgress/31_IRAK1KI_PF06650833_10nM/20241007/Output/Analysis.csv.gz")
+Table2 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/raven/Analysis_Output/IRAK4_Kinase_Paper_InProgress/31_IRAK1KI_PF06650833_10nM/20241016/Output/Analysis.csv.gz")
 
 Table <- rbind(
   Table1,
   Table2
 )
-
 # Checking the max mean and median values to test if calibration failed --------
 max(Table1$MAX_NORMALIZED_INTENSITY)
 median(Table1$MAX_NORMALIZED_INTENSITY)
@@ -18,7 +17,6 @@ max(Table2$MAX_NORMALIZED_INTENSITY)
 median(Table2$MAX_NORMALIZED_INTENSITY)
 mean(Table2$MAX_NORMALIZED_INTENSITY)
 
-
 unique(Table$COHORT)
 unique(Table$PROTEIN)
 unique(Table$IMAGE)
@@ -26,17 +24,18 @@ unique(Table$IMAGE)
 # Table Cleanup and save -----------------------------------------------------------
 rm(
   Table1,
-  Table2
+  Table2,
+  Table3
 )
 
 
 Table <- Table %>%  as.data.table()
 Table <- Table %>% 
   filter(
-    COHORT == "IRAK2WT_PF06650833_2uM"
+    COHORT == "IRAK1KI_PF06650833_10nM"
   ) %>% 
   mutate(
-    SHORT_LABEL = "Kinase Inhibitor 2 uM"
+    SHORT_LABEL = "Kinase Inhibitor 10 nM"
   ) %>% 
   group_by(
     UNIVERSAL_TRACK_ID
@@ -51,8 +50,10 @@ Table <- Table %>%
   ) %>%
   as.data.table()
 
+unique(Table$IMAGE)
 
-Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4_Autophosphorylaytion_Paper_Rewrite/00_Myddosomal_internal_phosphorylation_cohort_table/77_IRAK2WT_PF06650833_2uM_Compiled_Essential.csv.gz"
+Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4 Phosphorylation Paper/00_Cohort_table/24_MyD88-GFP_IRAK1-mScarlet_Zimlovisertib10nM_Analysis.csv.gz"
 fwrite(Table, Table_path)
 
 rm(list = ls())
+gc()

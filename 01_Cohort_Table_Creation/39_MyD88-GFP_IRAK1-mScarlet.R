@@ -1,8 +1,8 @@
 library(pacman)
 pacman::p_load(dplyr, tidyr, data.table)
 
-Table1 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/Analysis Output/20230727_IRAK4PhosphoPaper/02_IRAK1/20220913/Output/Analysis.csv.gz")
-Table2 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/Analysis Output/20230727_IRAK4PhosphoPaper/02_IRAK1/20220921/Output/Analysis.csv.gz")
+Table1 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/cobra/Analysis Output/20230727_IRAK4PhosphoPaper/02_IRAK1/20220913/Output/Analysis.csv.gz")
+Table2 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/cobra/Analysis Output/20230727_IRAK4PhosphoPaper/02_IRAK1/20220921/Output/Analysis.csv.gz")
 
 Table <- rbind(
   Table1,
@@ -49,8 +49,12 @@ Table <- Table %>%
   ) %>%
   as.data.table()
 
-Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/00_Myddosomal_internal_phosphorylation_cohort_table/02_IRAK1KI_Compiled_Essential.csv.gz"
+unique(Table$IMAGE)
+
+Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4 Phosphorylation Paper/00_Cohort_table/39_MyD88-GFP_IRAK1-mScarlet_Analysis.csv.gz"
 fwrite(Table, Table_path)
+
 
 # Cleanup -----------------------------------------------------------------
 rm(list = ls())
+gc()

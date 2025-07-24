@@ -66,7 +66,7 @@ image_values <- c(
   rep("20250314 plate2_well9E_40mM_cl622_IRAK4K213-214A_IRAK2WT_", 15),
   rep("20250325 plate2_well5G_40mM_cl622_IRAK4K213-214A_IRAK2WT_001", 2),
   rep("20250325 plate2_well5G_40mM_cl622_IRAK4K213-214A_IRAK2WT_002", 12),
-  rep("20250328 plate1_well3D_20mM_cl622_IRAK4K213-214A_IRAK2WT_001", 4)...
+  rep("20250328 plate1_well3D_20mM_cl622_IRAK4K213-214A_IRAK2WT_001", 4)
 )
 # Define the corresponding CELL values
 cell_values <- c(
@@ -113,8 +113,9 @@ Table <- Table %>%
   ) %>%
   as.data.table()
 
+unique(Table$IMAGE)
 
-Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4_Autophosphorylaytion_Paper_Rewrite/00_Myddosomal_internal_phosphorylation_cohort_table/53_TKO+MyD88-3xFLAG-IRES-Puro_mIRAK4K213-214A_mIRAK2WT.csv.gz"
+Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4 Phosphorylation Paper/00_Cohort_table/17_3xKO+MyD88-3xFLAG-IRES-Puro+mIRAK4K213-214A-GFP+mIRAK2WT-mScarlet_Analysis.csv.gz"
 fwrite(Table, Table_path)
 
 rm(list = ls())

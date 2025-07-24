@@ -54,31 +54,27 @@ rm(
 # Define the unique IMAGE values with their corresponding counts
 image_values <- c(
   rep("20250314 plate1_well9G_40mM_cl623_IRAK4K213-214A_IRAK3WT_", 1),
-  # rep("20250314 plate1_well9G_40mM_cl623_IRAK4K213-214A_IRAK3WT_001", 11),
   rep("20250328 plate1_well3B_40mM_cl623_IRAK4K213-214A_IRAK3WT_001", 10),
   rep("20250328 plate2_well3G_40mM_cl623_IRAK4K213-214A_IRAK3WT_001", 12),
   rep("20250401 plate1_well6B_40mM_cl623_IRAK4K213-214A_IRAK3WT_", 9),
   rep("20250401 plate2_well3E_40mM_cl623_IRAK4K213-214A_IRAK3WT_", 10)
-  # rep("20250416 plate1_well3C_40mM_cl623_IRAK4K213-214A_IRAK3WT_", 5)
 )
 
 # # Define the corresponding CELL values
 cell_values <- c(
   4,
-  # 1, 3, 4, 5, 11, 12, 16, 18, 20, 25, 26, 
   2, 5, 6, 8, 12, 13, 20, 22, 23, 29, 
   1, 6, 9, 11, 13, 14, 20, 21, 23, 24, 25, 26,
   1, 3, 4, 11, 13, 14, 18, 23, 24,
   1, 4, 5, 6, 7, 9, 11, 14, 16, 17
-  # 4, 5, 8, 10, 11
 )
-# 
+
 # # Create the Selection_Table data frame
 Selection_Table <- data.frame(
   IMAGE = image_values,
   CELL = cell_values
 )
-# 
+
 rm(
   image_values,
   cell_values
@@ -107,8 +103,9 @@ Table <- Table %>%
   ) %>%
   as.data.table()
 
+unique(Table$IMAGE)
 
-Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4_Autophosphorylaytion_Paper_Rewrite/00_Myddosomal_internal_phosphorylation_cohort_table/55_TKO+MyD88-3xFLAG-IRES-Puro_mIRAK4K213-214A_mIRAK3WT.csv.gz"
+Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4 Phosphorylation Paper/00_Cohort_table/19_3xKO+MyD88-3xFLAG-IRES-Puro+mIRAK4K213-214A-GFP+mIRAK3WT-mScarlet_Analysis.csv.gz"
 fwrite(Table, Table_path)
 
 rm(list = ls())

@@ -1,13 +1,14 @@
 library(pacman)
 pacman::p_load(dplyr, tidyr, data.table)
 
-Table1 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/cobra/Analysis Output/20230727_IRAK4PhosphoPaper/03_IRAK4KI_DMSO/20220110/Output/Analysis.csv.gz")
-Table2 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/cobra/Analysis Output/20230727_IRAK4PhosphoPaper/03_IRAK4KI_DMSO/20230731/Output/Analysis.csv.gz")
+Table1 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/raven/Analysis_Output/IRAK4_Kinase_Paper_InProgress/33_IRAK1KI_PF06650833_2uM/20241007/Output/Analysis.csv.gz")
+Table2 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/raven/Analysis_Output/IRAK4_Kinase_Paper_InProgress/33_IRAK1KI_PF06650833_2uM/20241016/Output/Analysis.csv.gz")
 
 Table <- rbind(
   Table1,
   Table2
 )
+
 # Checking the max mean and median values to test if calibration failed --------
 max(Table1$MAX_NORMALIZED_INTENSITY)
 median(Table1$MAX_NORMALIZED_INTENSITY)
@@ -21,24 +22,20 @@ unique(Table$COHORT)
 unique(Table$PROTEIN)
 unique(Table$IMAGE)
 
-
-
 # Table Cleanup and save -----------------------------------------------------------
 rm(
   Table1,
   Table2
 )
 
-
 # Table -------------------------------------------------------------------
 Table <- Table %>%  as.data.table()
 Table <- Table %>% 
   filter(
-    COHORT == "IRAK4KI+DMSO",
-    COMPLEMENTARY_NORMALIZED_INTENSITY_1 != COMPLEMENTARY_TOTAL_INTENSITY_1
+    COHORT == "IRAK1KI_PF06650833_2uM"
   ) %>% 
   mutate(
-    SHORT_LABEL = "DMSO"
+    SHORT_LABEL = "Kinase Inhibitor 2 uM"
   ) %>% 
   group_by(
     UNIVERSAL_TRACK_ID
@@ -55,7 +52,7 @@ Table <- Table %>%
 
 unique(Table$IMAGE)
 
-Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4 Phosphorylation Paper/00_Cohort_table/21_MyD88-GFP_IRAK4-mScarlet_DMSO_Analysis.csv.gz"
+Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4 Phosphorylation Paper/00_Cohort_table/26_MyD88-GFP_IRAK1-mScarlet_Zimlovisertib2uM_Analysis.csv.gz"
 fwrite(Table, Table_path)
 
 rm(list = ls())

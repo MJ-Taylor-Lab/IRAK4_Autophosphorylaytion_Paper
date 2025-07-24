@@ -38,39 +38,39 @@ rm(
 
 # # Manually curating cells -------------------------------------------------
 # Define the unique IMAGE values with their corresponding counts
-# image_values <- c(
-#   rep("20250314 plate1_well9F_40mM_cl571_IRAK4WT_IRAK1WT_001", 2),
-#   rep("20250328 plate2_well2E_40mM_cl372_IRAK4WT_IRAK1WT_001", 1),
-#   rep("20250401 plate1_well5D_40mM_cl372_IRAK4WT_IRAK1WT_001", 3),
-#   rep("20250401 plate1_well5D_40mM_cl372_IRAK4WT_IRAK1WT_002", 7)
-# )
-# 
-# # Define the corresponding CELL values
-# cell_values <- c(
-#   2, 7,
-#   6,
-#   1, 9, 11, 
-#   11, 12, 17, 19, 21, 22, 23
-# )
-# 
-# # Create the Selection_Table data frame
-# Selection_Table <- data.frame(
-#   IMAGE = image_values,
-#   CELL = cell_values
-# )
-# 
-# rm(
-#   image_values,
-#   cell_values
-# )
+image_values <- c(
+  rep("20250314 plate1_well9F_40mM_cl571_IRAK4WT_IRAK1WT_001", 2),
+  rep("20250328 plate2_well2E_40mM_cl372_IRAK4WT_IRAK1WT_001", 1),
+  rep("20250401 plate1_well5D_40mM_cl372_IRAK4WT_IRAK1WT_001", 3),
+  rep("20250401 plate1_well5D_40mM_cl372_IRAK4WT_IRAK1WT_002", 7)
+)
+
+# Define the corresponding CELL values
+cell_values <- c(
+  2, 7,
+  6,
+  1, 9, 11,
+  11, 12, 17, 19, 21, 22, 23
+)
+
+# Create the Selection_Table data frame
+Selection_Table <- data.frame(
+  IMAGE = image_values,
+  CELL = cell_values
+)
+
+rm(
+  image_values,
+  cell_values
+)
 
 
 # Making Final Table ------------------------------------------------------
 Table <- Table %>%  as.data.table()
 Table <- Table %>% 
-  # inner_join(
-  #   Selection_Table, by = c("IMAGE", "CELL")
-  # ) %>%
+  inner_join(
+    Selection_Table, by = c("IMAGE", "CELL")
+  ) %>%
   mutate(
     SHORT_LABEL = "IRAK4 WT + IRAK1 WT"
   ) %>% 
@@ -88,7 +88,9 @@ Table <- Table %>%
   as.data.table()
 
 
-Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4_Autophosphorylaytion_Paper_Rewrite/00_Myddosomal_internal_phosphorylation_cohort_table/50_TKO+MyD88-3xFLAG-IRES-Puro_mIRAK4WT_mIRAK1WT.csv.gz"
+unique(Table$IMAGE)
+
+Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4 Phosphorylation Paper/00_Cohort_table/14_3xKO+MyD88-3xFLAG-IRES-Puro+mIRAK4WT-GFP+mIRAK1WT-mScarlet_Analysis.csv.gz"
 fwrite(Table, Table_path)
 
 rm(list = ls())

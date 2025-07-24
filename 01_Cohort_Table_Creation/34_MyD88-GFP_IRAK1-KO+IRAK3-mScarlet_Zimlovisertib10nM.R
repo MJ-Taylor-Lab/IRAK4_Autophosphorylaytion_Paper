@@ -1,13 +1,16 @@
 library(pacman)
 pacman::p_load(dplyr, tidyr, data.table)
 
-Table1 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/raven/Analysis_Output/IRAK4_Kinase_Paper_InProgress/31_IRAK1KI_PF06650833_10nM/20241007/Output/Analysis.csv.gz")
-Table2 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/raven/Analysis_Output/IRAK4_Kinase_Paper_InProgress/31_IRAK1KI_PF06650833_10nM/20241016/Output/Analysis.csv.gz")
+Table1 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/raven/Analysis_Output/IRAK4_Kinase_Paper_InProgress/61_IRAK3WT_PF06650833_10nM/20250715_1/Output/Analysis.csv.gz")
+Table2 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/raven/Analysis_Output/IRAK4_Kinase_Paper_InProgress/61_IRAK3WT_PF06650833_10nM/20250715_2/Output/Analysis.csv.gz")
+Table3 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/raven/Analysis_Output/IRAK4_Kinase_Paper_InProgress/61_IRAK3WT_PF06650833_10nM/20250722/Output/Analysis.csv.gz")
 
 Table <- rbind(
   Table1,
-  Table2
+  Table2,
+  Table3
 )
+
 # Checking the max mean and median values to test if calibration failed --------
 max(Table1$MAX_NORMALIZED_INTENSITY)
 median(Table1$MAX_NORMALIZED_INTENSITY)
@@ -16,6 +19,11 @@ mean(Table1$MAX_NORMALIZED_INTENSITY)
 max(Table2$MAX_NORMALIZED_INTENSITY)
 median(Table2$MAX_NORMALIZED_INTENSITY)
 mean(Table2$MAX_NORMALIZED_INTENSITY)
+
+max(Table3$MAX_NORMALIZED_INTENSITY)
+median(Table3$MAX_NORMALIZED_INTENSITY)
+mean(Table3$MAX_NORMALIZED_INTENSITY)
+
 
 unique(Table$COHORT)
 unique(Table$PROTEIN)
@@ -32,7 +40,7 @@ rm(
 Table <- Table %>%  as.data.table()
 Table <- Table %>% 
   filter(
-    COHORT == "IRAK1KI_PF06650833_10nM"
+    COHORT == "IRAK3WT_PF06650833_10nM"
   ) %>% 
   mutate(
     SHORT_LABEL = "Kinase Inhibitor 10 nM"
@@ -50,8 +58,12 @@ Table <- Table %>%
   ) %>%
   as.data.table()
 
+unique(Table$IMAGE)
 
-Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4_Autophosphorylaytion_Paper_Rewrite/00_Myddosomal_internal_phosphorylation_cohort_table/31_IRAK1KI_PF06650833_10nM_Compiled_Essential.csv.gz"
+Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4 Phosphorylation Paper/00_Cohort_table/34_MyD88-GFP_IRAK1-KO+IRAK3-mScarlet_Zimlovisertib10nM_Analysis.csv.gz"
 fwrite(Table, Table_path)
 
+
+# Cleanup -----------------------------------------------------------------
 rm(list = ls())
+gc()

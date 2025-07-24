@@ -55,9 +55,12 @@ Table <- Table %>%
   ) %>%
   as.data.table()
 
+unique(Table$IMAGE)
 
-Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4_Autophosphorylaytion_Paper_Rewrite/00_Myddosomal_internal_phosphorylation_cohort_table/59_MyD88+IRAK4-KO+IRAK4-WT.csv.gz"
+Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4 Phosphorylation Paper/00_Cohort_table/40_MyD88-GFP+IRAK4-KO+IRAK4WT-mScarlet_Analysis.csv.gz"
 fwrite(Table, Table_path)
 
+
+# Cleanup -----------------------------------------------------------------
 rm(list = ls())
 gc()

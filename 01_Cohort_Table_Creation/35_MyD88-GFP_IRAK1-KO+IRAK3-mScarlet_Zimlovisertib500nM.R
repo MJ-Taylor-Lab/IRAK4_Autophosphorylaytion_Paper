@@ -1,9 +1,9 @@
 library(pacman)
 pacman::p_load(dplyr, tidyr, data.table)
 
-Table1 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/raven/Analysis_Output/IRAK4_Kinase_Paper_InProgress/69_IRAK2WT_PF06650833_20uM/20250703/Output/Analysis.csv.gz")
-Table2 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/raven/Analysis_Output/IRAK4_Kinase_Paper_InProgress/69_IRAK2WT_PF06650833_20uM/20250708_1/Output/Analysis.csv.gz")
-Table3 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/raven/Analysis_Output/IRAK4_Kinase_Paper_InProgress/69_IRAK2WT_PF06650833_20uM/20250708_2/Output/Analysis.csv.gz")
+Table1 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/raven/Analysis_Output/IRAK4_Kinase_Paper_InProgress/62_IRAK3WT_PF06650833_500nM/20250715/Output/Analysis.csv.gz")
+Table2 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/raven/Analysis_Output/IRAK4_Kinase_Paper_InProgress/62_IRAK3WT_PF06650833_500nM/20250722_1/Output/Analysis.csv.gz")
+Table3 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/raven/Analysis_Output/IRAK4_Kinase_Paper_InProgress/62_IRAK3WT_PF06650833_500nM/20250722_2/Output/Analysis.csv.gz")
 
 Table <- rbind(
   Table1,
@@ -39,10 +39,11 @@ rm(
 Table <- Table %>%  as.data.table()
 Table <- Table %>% 
   filter(
-    COHORT == "IRAK2WT_PF06650833_20uM"
+    COHORT == "IRAK3WT_PF06650833_500nM",
+    IMAGE != "20250722 plate01_well2E_10nM_cl359_IRAK3WT_inhi500nm_001"
   ) %>% 
   mutate(
-    SHORT_LABEL = "Kinase Inhibitor 20 uM"
+    SHORT_LABEL = "Kinase Inhibitor 500 nM"
   ) %>% 
   group_by(
     UNIVERSAL_TRACK_ID
@@ -57,8 +58,12 @@ Table <- Table %>%
   ) %>%
   as.data.table()
 
+unique(Table$IMAGE)
 
-Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4_Autophosphorylaytion_Paper_Rewrite/00_Myddosomal_internal_phosphorylation_cohort_table/78_IRAK2WT_PF06650833_20uM_Compiled_Essential.csv.gz"
+Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4 Phosphorylation Paper/00_Cohort_table/35_MyD88-GFP_IRAK1-KO+IRAK3-mScarlet_Zimlovisertib500nM_Analysis.csv.gz"
 fwrite(Table, Table_path)
 
+
+# Cleanup -----------------------------------------------------------------
 rm(list = ls())
+gc()

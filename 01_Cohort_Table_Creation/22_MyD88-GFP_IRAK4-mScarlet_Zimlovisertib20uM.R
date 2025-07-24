@@ -1,8 +1,8 @@
 library(pacman)
 pacman::p_load(dplyr, tidyr, data.table)
 
-Table1 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/raven/Analysis_Output/IRAK4_Kinase_Paper_InProgress/32_IRAK1KI_PF06650833_500nM/20230414/Output/Analysis.csv.gz")
-Table2 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/raven/Analysis_Output/IRAK4_Kinase_Paper_InProgress/32_IRAK1KI_PF06650833_500nM/20230608/Output/Analysis.csv.gz")
+Table1 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/cobra/Analysis Output/20230727_IRAK4PhosphoPaper/04_IRAK4KI_PF06650833_20uM/20211008/Output/Analysis.csv.gz")
+Table2 <- fread("/Volumes/TAYLOR-LAB/Niranjan/04 Image Analysis/cobra/Analysis Output/20230727_IRAK4PhosphoPaper/04_IRAK4KI_PF06650833_20uM/20220110/Output/Analysis.csv.gz")
 
 Table <- rbind(
   Table1,
@@ -21,20 +21,23 @@ unique(Table$COHORT)
 unique(Table$PROTEIN)
 unique(Table$IMAGE)
 
+
+
 # Table Cleanup and save -----------------------------------------------------------
 rm(
   Table1,
   Table2
 )
 
-
+# Table -------------------------------------------------------------------
 Table <- Table %>%  as.data.table()
 Table <- Table %>% 
   filter(
-    COHORT == "IRAK1KI_PF06650833_500nM"
+    COHORT == "IRAK4KI+PF06650833_20uM",
+    COMPLEMENTARY_NORMALIZED_INTENSITY_1 != COMPLEMENTARY_TOTAL_INTENSITY_1
   ) %>% 
   mutate(
-    SHORT_LABEL = "Kinase Inhibitor 500 nM"
+    SHORT_LABEL = "Kinase Inhibitor 20 uM"
   ) %>% 
   group_by(
     UNIVERSAL_TRACK_ID
@@ -49,8 +52,7 @@ Table <- Table %>%
   ) %>%
   as.data.table()
 
-
-Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4_Autophosphorylaytion_Paper_Rewrite/00_Myddosomal_internal_phosphorylation_cohort_table/32_IRAK1KI_PF06650833_500nM_Compiled_Essential.csv.gz"
+Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4_Autophosphorylaytion_Paper_Rewrite/00_Myddosomal_internal_phosphorylation_cohort_table/73_MyD88-GFP_IRAK4KI-mScarlet_Inhibitor20uM.csv.gz"
 fwrite(Table, Table_path)
 
 rm(list = ls())
