@@ -8,6 +8,8 @@ Table2 <- fread("/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4 Phosphorylation 
 # Setting directory paths
 Plot_Directory_Save_Path <- "/Users/u_niranjan/Desktop/Cell_Figures/Plots"
 Plot_Script_Directory <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4 Phosphorylation Paper/IRAK4_Autophosphorylaytion_Paper/02_Figure_Scripts/02_Figure2/Figure_2J_2K"
+Plot_Script_Directory_Supplementary <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4 Phosphorylation Paper/IRAK4_Autophosphorylaytion_Paper/02_Figure_Scripts/02_SupplementaryFigure2/SupplementaryFigure_2F"
+
 # Sourcing Function folder
 Function_folder <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4 Phosphorylation Paper/IRAK4_Autophosphorylaytion_Paper/02_Figure_Scripts/00_Functions"
 
@@ -26,10 +28,6 @@ rm(
 # Adjusting ORDER_NUMBER and filtering data
 Table <- Table %>% 
   mutate(
-    ORDER_NUMBER = case_when(
-      SHORT_LABEL == "IRAK4 WT + IRAK2 WT" ~ 1,
-      SHORT_LABEL == "IRAK4 WT + IRAK2 DD" ~ 2
-    ),
     SHORT_LABEL = case_when(
       SHORT_LABEL == "IRAK4 WT + IRAK2 WT" ~ "IRAK2-WT",
       SHORT_LABEL == "IRAK4 WT + IRAK2 DD" ~ "IRAK2-DD"
@@ -117,35 +115,41 @@ rm(
   ScriptList
 )
 
-# Colocalisation Percentage by Time threshold -----------------------------
-Plot_Directory_Save_Path <- file.path(Plot_Directory_Path, "03_Colocalisation by Time")
-if(!file.exists(Plot_Directory_Save_Path)){
-  dir.create(Plot_Directory_Save_Path)
+# Size of Complementary Protien -------------------------------------------
+Plot_Directory_Path <- dirname(Plot_Directory_Path)
+Plot_Directory_Path <- dirname(Plot_Directory_Path)
+
+# Creating Folder to save Images
+Plot_Directory_Path <- file.path(Plot_Directory_Path, "02_Supplementary Figure 2")
+if(!file.exists(Plot_Directory_Path)){
+  dir.create(Plot_Directory_Path)
 }
 
-LOWER_LIMIT = 0 # The Plot y-axis Lower limit
-UPPER_LIMIT = 25 # The Plot y-axis Upper limit
-LOWER_LIMIT_AXIS_TICKS = 0 # Axis Lower Limit
-X_AXIS_INTERVAL = 10 # Axis tick mark Interval 
+# Creating Folder to save Images
+Plot_Directory_Path <- file.path(Plot_Directory_Path, "Supplementary_Figure_2F")
+if(!file.exists(Plot_Directory_Path)){
+  dir.create(Plot_Directory_Path)
+}
 
 ScriptList <- c(
-  "03_Colocalisation Percentage with Dwell Time thresholds.R" # Dwell Time
+  "01_Number of Tracks_bySize.R" # Dwell Time
 )
 
-# Command
-tryCatch({
-  print(paste("::::::::::::::::::::", 1, "::::::::::::::::::::"))
-  setwd(Plot_Script_Directory)
-  source(ScriptList[1], local = T)
-}, error = function(e) {print(paste("Error loading", ScriptList[1]))})
+SIZE_THRESHOLD = 4
 
+# Command
+for(x in 1:length(ScriptList)){
+  tryCatch({
+    print(paste("::::::::::::::::::::", 1, "::::::::::::::::::::"))
+    setwd(Plot_Script_Directory_Supplementary)
+    source(ScriptList[1], local = T)
+  }, error = function(e) {print(paste("Error loading", ScriptList[1]))})
+}
 
 rm(
-  LOWER_LIMIT,
-  UPPER_LIMIT,
-  LOWER_LIMIT_AXIS_TICKS,
-  X_AXIS_INTERVAL,
-  ScriptList
+  ScriptList,
+  SIZE_THRESHOLD,
+  x
 )
 
 # Cleanup -----------------------------------------------------------------
