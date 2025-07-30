@@ -1,4 +1,4 @@
-Plot_ColocalisationPercentage_grey <- function(Colocalisation_Percentage_byCell, Colocalisation_Percentage_byImage, Colocalisation_Percentage_byCOHORT){
+Plot_ColocalisationPercentage <- function(Colocalisation_Percentage_byCell, Colocalisation_Percentage_byImage, Colocalisation_Percentage_byCOHORT){
   Plot <- ggplot(
     data = Colocalisation_Percentage_byCOHORT,
     aes(

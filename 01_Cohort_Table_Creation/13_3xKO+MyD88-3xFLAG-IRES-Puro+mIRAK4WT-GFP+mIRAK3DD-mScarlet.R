@@ -46,7 +46,6 @@ rm(
 # # Manually curating cells -------------------------------------------------
 # Define the unique IMAGE values with their corresponding counts
 image_values <- c(
-  rep("20250225 plate1_well2C_20nM_cl611_IRAK4WT_IRAK3DD_001", 3),
   rep("20250225 plate1_well3C_20nM_cl611_IRAK4WT_IRAK3DD_001", 10),
   rep("20230304 plate1_well3B_20nM_cl611_IRAK4WT_IRAK3DD_001", 4),
   rep("20230304 plate1_well3C_20nM_cl611_IRAK4WT_IRAK3DD_001", 10),
@@ -56,7 +55,6 @@ image_values <- c(
 )
 # Define the corresponding CELL values
 cell_values <- c(
-  2, 15, 20,
   2, 3, 4, 5, 6, 9, 11, 15, 16, 17,
   2, 4, 16, 21,
   2, 3, 4, 5, 8, 9, 14, 18, 19, 23,

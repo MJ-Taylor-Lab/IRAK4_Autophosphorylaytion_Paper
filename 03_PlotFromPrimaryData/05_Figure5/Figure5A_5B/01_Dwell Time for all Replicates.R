@@ -110,96 +110,64 @@ Cell_Summary_by_Cohort <- Cell_Summary_by_Image %>%
 
 # Plot Primary--------------------------------------------------------------------
 Plot <- ggplot(
-  data = Colocalisation_Percentage_byCOHORT,
+  data = Cell_Summary_by_Image,
   aes(
-    y = SHORT_LABEL,
-    x = MEAN_COLOCLIZED_SPOT_TEST
+    fill = SHORT_LABEL
   )
 ) +
-  geom_violin(
-    data = Colocalisation_Percentage_byCell,
+  geom_bar(
+    data = Cell_Summary_by_Cohort,
     aes(
-      x = MEAN_COLOCLIZED_SPOT_TEST,
-      y = SHORT_LABEL,
-      fill = SHORT_LABEL
+      y = SHORT_LABEL, 
+      x = 100
     ),
+    fill = "#E5E5E5",
     width = 0.5,
-    scale = "width",
-    linewidth = 0.2,
-    fill = "grey"
+    stat = "identity",
+    color = "black",
+    linewidth = 0.1
   ) +
-  geom_errorbar(
+  geom_bar(
+    data = Cell_Summary_by_Cohort,
     aes(
-      x = MEAN_COLOCLIZED_SPOT_TEST,
-      xmin = YMIN_COLOCLIZED_SPOT_TEST,
-      xmax = YMAX_COLOCLIZED_SPOT_TEST
-    ),
-    width = 0.1,
-    size = 0.1
-  ) +
-  # Mean of Colocalisation percentage for 1st Cohort
-  geom_segment(
-    aes(
-      y = 0.95, 
-      yend = 1.05,
-      x = Colocalisation_Percentage_byCOHORT$MEAN_COLOCLIZED_SPOT_TEST[1],
-      xend = Colocalisation_Percentage_byCOHORT$MEAN_COLOCLIZED_SPOT_TEST[1]
-    ),
-    size = 0.1
-  ) +
-  # Mean of Colocalisation percentage for 2nd Cohort
-  geom_segment(
-    aes(
-      y = 1.95, 
-      yend = 2.05,
-      x = Colocalisation_Percentage_byCOHORT$MEAN_COLOCLIZED_SPOT_TEST[2],
-      xend = Colocalisation_Percentage_byCOHORT$MEAN_COLOCLIZED_SPOT_TEST[2]
-    ),
-    size = 0.1
-  ) +
-  # Mean of Colocalisation percentage for 2nd Cohort
-  geom_segment(
-    aes(
-      y = 2.95, 
-      yend = 3.05,
-      x = Colocalisation_Percentage_byCOHORT$MEAN_COLOCLIZED_SPOT_TEST[3],
-      xend = Colocalisation_Percentage_byCOHORT$MEAN_COLOCLIZED_SPOT_TEST[3]
-    ),
-    size = 0.1
-  ) +
-  
-  # Add Image Means
-  geom_jitter(
-    data = Colocalisation_Percentage_byImage,
-    aes(
-      x = MEAN_COLOCLIZED_SPOT_TEST,
+      x = FRACTION,
       y = SHORT_LABEL
     ),
-    shape = 21,
-    fill = Colocalisation_Percentage_byImage$JITTER_COLOR,
-    size = 1.2,
-    stroke = 0.2,
-    height = 0.1  # Control vertical spread
+    fill = "#B2B2B2",
+    width = 0.5,
+    stat = "identity",
+    color = "black",
+    linewidth = 0.1
   ) +
-  
-  #Setting X-axis limts
   scale_x_continuous(
-    limits = c(LOWER_LIMIT, UPPER_LIMIT), 
-    breaks = seq(LOWER_LIMIT_AXIS_TICKS, UPPER_LIMIT, by = X_AXIS_INTERVAL), 
+    limits = c(-0.02, 100),
+    expand = c(0, 0),
+    breaks = c(0, 50, 100),
     position = "top",
-    expand = c(0,0)
   ) +
   labs(
-    x = "Colocalised puncta per Cell (%)"
+    x = "Percentage"
   ) +
   theme_classic()
-
-return(Plot)
 
 
 
 
 # Plot with pvalue and other info -----------------------------------------
+#p-value Label
+PrimaryProtien_Number_and_Association_Events <- paste0(
+  Cell_Summary_by_Cohort$SHORT_LABEL[1], " - PRIMARY_PROTIEN_TRACK_COUNT_byCOHORT = ", Cell_Summary_by_Cohort$PRIMARY_PROTIEN_TRACK_COUNT_byCOHORT[1], " \n",
+  " and PRIMARY_PROTIEN_ASSOCIATION_EVENT_COUNT_byCOHORT = ", Cell_Summary_by_Cohort$PRIMARY_PROTIEN_ASSOCIATION_EVENT_COUNT_byCOHORT[1], " \n", 
+  "FRACTION_MEAN = ", signif(Cell_Summary_by_Cohort$FRACTION[1], digits = 3), " +/- SEM = ", signif(Cell_Summary_by_Cohort$SEM[1], digits = 3) 
+)  
+for(index in 2:nrow(Cell_Summary_by_Cohort)){
+  PrimaryProtien_Number_and_Association_Events <- paste0(
+    PrimaryProtien_Number_and_Association_Events, " \n", " \n", 
+    Cell_Summary_by_Cohort$SHORT_LABEL[index], " - PRIMARY_PROTIEN_TRACK_COUNT_byCOHORT = ", Cell_Summary_by_Cohort$PRIMARY_PROTIEN_TRACK_COUNT_byCOHORT[index], " \n",
+    " and PRIMARY_PROTIEN_ASSOCIATION_EVENT_COUNT_byCOHORT = ", Cell_Summary_by_Cohort$PRIMARY_PROTIEN_ASSOCIATION_EVENT_COUNT_byCOHORT[index], " \n", 
+    "FRACTION_MEAN = ", signif(Cell_Summary_by_Cohort$FRACTION[index], digits = 3), " +/- SEM = ", signif(Cell_Summary_by_Cohort$SEM[index], digits = 3)
+  )
+}
 #p-value Label
 p_value_label <- paste0(
   p_value_Table$COHORT1[1], " vs ", p_value_Table$COHORT2[1], " p_value = ", p_value_Table$p_value[1]
@@ -212,21 +180,55 @@ for(index in 2:nrow(p_value_Table)){
   )
 }
 
-##### Plot with p-value and axis
-Plot_Mean_SEM_pvalue <- Plot +
+
+Plot <- Plot +
+  geom_jitter(
+    data = Cell_Summary_by_Image,
+    aes(
+      y = SHORT_LABEL, 
+      x = FRACTION
+    ),
+    shape = 21,
+    color = "black",
+    fill = Cell_Summary_by_Image$COLOR,
+    size = 3,
+    height = 0.1
+  ) +
+  geom_errorbar(
+    data = Cell_Summary_by_Cohort,
+    aes(
+      x = FRACTION,
+      y = SHORT_LABEL,
+      xmin = Y_MIN,
+      xmax = Y_MAX
+    ),
+    width = 0.1
+  ) +
+  
   #p-value Annotation
   annotate(
     "text", 
-    y = 2.5, 
-    x = 5, 
-    label = p_value_label
+    y = 3, 
+    x = 0.55, 
+    label = p_value_label,
+    size = 2 
   ) +
+  
+  # Fill in details about number of Primary Protein Number and Association Events
+  annotate(
+    "text", 
+    y = 1, 
+    x = 0.5, 
+    label = PrimaryProtien_Number_and_Association_Events,
+    size = 2,
+    colour = "red"
+  )  +
   theme(
     axis.title.y = element_blank(),
     axis.title.x = element_text(size = 7),
     axis.text = element_text(size = 6),
     legend.position = "none",
-    axis.text.y = element_text(angle = 90, hjust = 0.5),
+    axis.text.y = element_text(hjust = 0.5),
     axis.line.x.top = element_line(color = "black") # Add x-axis line on top
   )
 
@@ -242,13 +244,162 @@ ggsave(
 )
 
 # Plot for Publication ----------------------------------------------------
-Plot <- Plot +
+Plot <- # Modify plot for figure and save as another PDF
+  Plot +
+  geom_jitter(
+    data = Cell_Summary_by_Image,
+    aes(
+      x = FRACTION,
+      y = SHORT_LABEL
+    ),
+    shape = 21,
+    color = "black",
+    fill = Cell_Summary_by_Image$COLOR,
+    size = 1.5,
+    stroke = 0.2,
+    height = 0.2  # Control vertical spread
+  ) +
+  #Adding Mean of 1 Cohort
+  geom_segment(
+    aes(
+      y = 0.95, 
+      yend = 1.05,
+      x = Cell_Summary_by_Cohort$FRACTION[1],
+      xend = Cell_Summary_by_Cohort$FRACTION[1]
+    ),
+    size = 0.15,
+    color = "black"
+  ) +
+  # Adding Mean + SEM of 1 Cohort
+  geom_segment(
+    aes(
+      y = 0.95, 
+      yend = 1.05,
+      x = Cell_Summary_by_Cohort$Y_MAX[1],
+      xend = Cell_Summary_by_Cohort$Y_MAX[1]
+    ),
+    size = 0.1,
+    color = "black"
+  ) +
+  # Adding Mean - SEM of 1 Cohort
+  geom_segment(
+    aes(
+      y = 0.95, 
+      yend = 1.05,
+      x = Cell_Summary_by_Cohort$Y_MIN[1],
+      xend = Cell_Summary_by_Cohort$Y_MIN[1]
+    ),
+    size = 0.1,
+    color = "black"
+  ) +
+  # Adding Line connection Fractiom Mean + SEM  to -SEMof 1 Cohort
+  geom_segment(
+    aes(
+      y = 1, 
+      yend = 1,
+      x = Cell_Summary_by_Cohort$Y_MAX[1],
+      xend = Cell_Summary_by_Cohort$Y_MIN[1]
+    ),
+    size = 0.1,
+    color = "black"
+  ) +
+  
+  
+  #Adding Mean of 2 Cohort
+  geom_segment(
+    aes(
+      y = 1.95, 
+      yend = 2.05,
+      x = Cell_Summary_by_Cohort$FRACTION[2],
+      xend = Cell_Summary_by_Cohort$FRACTION[2]
+    ),
+    size = 0.15,
+    color = "black"
+  ) +
+  # Adding Mean + SEM of 2 Cohort
+  geom_segment(
+    aes(
+      y = 1.95, 
+      yend = 2.05,
+      x = Cell_Summary_by_Cohort$Y_MAX[2],
+      xend = Cell_Summary_by_Cohort$Y_MAX[2]
+    ),
+    size = 0.1,
+    color = "black"
+  ) +
+  # Adding Mean - SEM of 2 Cohort
+  geom_segment(
+    aes(
+      y = 1.95, 
+      yend = 2.05,
+      x = Cell_Summary_by_Cohort$Y_MIN[2],
+      xend = Cell_Summary_by_Cohort$Y_MIN[2]
+    ),
+    size = 0.1,
+    color = "black"
+  ) +
+  # Adding Line connection Fraction Mean + SEM  to -SEM of 2 Cohort
+  geom_segment(
+    aes(
+      y = 2, 
+      yend = 2,
+      x = Cell_Summary_by_Cohort$Y_MAX[2],
+      xend = Cell_Summary_by_Cohort$Y_MIN[2]
+    ),
+    size = 0.1,
+    color = "black"
+  ) +
+  
+  #Adding Mean of 3 Cohort
+  geom_segment(
+    aes(
+      y = 2.95, 
+      yend = 3.05,
+      x = Cell_Summary_by_Cohort$FRACTION[3],
+      xend = Cell_Summary_by_Cohort$FRACTION[3]
+    ),
+    size = 0.15,
+    color = "black"
+  ) +
+  # Adding Mean + SEM of 3 Cohort
+  geom_segment(
+    aes(
+      y = 2.95, 
+      yend = 3.05,
+      x = Cell_Summary_by_Cohort$Y_MAX[3],
+      xend = Cell_Summary_by_Cohort$Y_MAX[3]
+    ),
+    size = 0.1,
+    color = "black"
+  ) +
+  # Adding Mean - SEM of 3 Cohort
+  geom_segment(
+    aes(
+      y = 2.95, 
+      yend = 3.05,
+      x = Cell_Summary_by_Cohort$Y_MIN[3],
+      xend = Cell_Summary_by_Cohort$Y_MIN[3]
+    ),
+    size = 0.1,
+    color = "black"
+  ) +
+  # Adding Line connection Fraction Mean + SEM  to -SEM of 3 Cohort
+  geom_segment(
+    aes(
+      y = 3, 
+      yend = 3,
+      x = Cell_Summary_by_Cohort$Y_MAX[3],
+      xend = Cell_Summary_by_Cohort$Y_MIN[3]
+    ),
+    size = 0.1,
+    color = "black"
+  ) +
   theme(
     axis.title.y = element_blank(),
     axis.title.x = element_blank(),
     legend.position = "none",
-    axis.text.y = element_blank(),
-    axis.text.x = element_text(size = 6, hjust = 0.5),
+    axis.text.y = element_text(size = 6, hjust = 0),
+    axis.text.x = element_text(size = 6, hjust = 0),
     panel.background = element_blank(), # Remove the panel background
     plot.background = element_blank(),  # Remove the plot background
     legend.background = element_blank(), # Remove the legend background

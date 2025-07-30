@@ -39,18 +39,24 @@ rm(
 # # Manually curating cells -------------------------------------------------
 # Define the unique IMAGE values with their corresponding counts
 image_values <- c(
-  rep("20250314 plate1_well9F_40mM_cl571_IRAK4WT_IRAK1WT_001", 2),
-  rep("20250328 plate2_well2E_40mM_cl372_IRAK4WT_IRAK1WT_001", 1),
-  rep("20250401 plate1_well5D_40mM_cl372_IRAK4WT_IRAK1WT_001", 3),
-  rep("20250401 plate1_well5D_40mM_cl372_IRAK4WT_IRAK1WT_002", 7)
+  rep("20250314 plate1_well9F_40mM_cl571_IRAK4WT_IRAK1WT_001", 20),
+  rep("20250328 plate1_well3C_40mM_cl372_IRAK4WT_IRAK1WT_001", 31),
+  rep("20250328 plate2_well2E_40mM_cl372_IRAK4WT_IRAK1WT_001", 30),
+  rep("20250401 plate1_well5D_40mM_cl372_IRAK4WT_IRAK1WT_001", 21),
+  rep("20250401 plate1_well5D_40mM_cl372_IRAK4WT_IRAK1WT_002", 29),
+  rep("20250401 plate1_well6C_40mM_cl372_IRAK4WT_IRAK1WT_001", 29),
+  rep("20250401 plate1_well6C_40mM_cl372_IRAK4WT_IRAK1WT_002", 24)
 )
 
 # Define the corresponding CELL values
 cell_values <- c(
-  2, 7,
-  6,
-  1, 9, 11,
-  11, 12, 17, 19, 21, 22, 23
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24
 )
 
 # Create the Selection_Table data frame

@@ -59,7 +59,7 @@ Table <- Table %>%
 
 unique(Table$IMAGE)
 
-Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4 Phosphorylation Paper/00_Cohort_table/28_MyD88-GFP_IRAK1-KO+IRAK2-mScarlet_DMSOM_Analysis.csv.gz"
+Table_path <- "/Users/u_niranjan/Desktop/Git Scripts/01_IRAK4 Phosphorylation Paper/00_Cohort_table/28_MyD88-GFP_IRAK1-KO+IRAK2-mScarlet_DMSO_Analysis.csv.gz"
 fwrite(Table, Table_path)
 
 rm(list = ls())

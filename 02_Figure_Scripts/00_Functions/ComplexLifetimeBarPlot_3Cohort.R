@@ -35,10 +35,11 @@ Plot_ComplexLifetime <- function(
     scale_x_continuous(
       limits = c(-0.02, 100),
       expand = c(0, 0),
+      breaks = c(0, 50, 100),
       position = "top",
     ) +
     labs(
-      x = "Fraction"
+      x = "Percentage"
     ) +
     theme_classic()
   
@@ -108,7 +109,7 @@ Plot_ComplexLifetime_withMeanSEMandpvalues <- function(
     annotate(
       "text", 
       y = 3, 
-      x = 0.55, 
+      x = 55, 
       label = p_value_label,
       size = 2 
     ) +

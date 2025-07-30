@@ -76,7 +76,6 @@ Colocalisation_Fx <- function(Count){
   
   
     # t-test ------------------------------------------------------------------
-  ### DMSO vs Kinase Inhibitor 20 uM
   p_value_test_confirmation = "Y"
   if(p_value_test_confirmation == "Y"){
     # Original list with 2-5 components
@@ -145,7 +144,7 @@ Colocalisation_Fx <- function(Count){
   # Generate a Violin Baseplot
   Function_script <- file.path(Function_folder, "ColocalisationPercentage_3Cohort.R")
   source(Function_script)
-  Plot <- Plot_ColocalisationPercentage_grey(
+  Plot <- Plot_ColocalisationPercentage(
     Colocalisation_Percentage_byCell, 
     Colocalisation_Percentage_byImage, 
     Colocalisation_Percentage_byCOHORT
@@ -193,14 +192,16 @@ rm(
   Plot_Directory_Save_Path,
   Cell_Summary_by_Track,
   Dwell_Test_List,
+  p_value_test_confirmation,
   Colocalisation_Fx,
   Colocalisation_Percentage_byCell,
   Cell_Summary_by_Track_for_ColocalisationPercentage,
   Plot_ColocalisationPercentage_pvalues,
   Plot_ColocalisationPercentage_forPublication,
-  Plot_ComplexLifetime_forPublication_grey,
-  Plot_ComplexLifetime_grey,
-  Plot_ComplexLifetime_withMeanSEMandpvalues_grey,
+  Plot_ColocalisationPercentage,
+  Plot_ColocalisationPercentage_forPublication,
+  Plot_ColocalisationPercentage_pvalues,
+  Plot_ComplexLifetime_forPublication_grey_concentration_dosage,
   Function_script
 )
 

@@ -62,9 +62,7 @@ rm(
 image_values <- c(
   rep("20250225 plate2_well3G_20mM_cl622_IRAK4K213-214A_IRAK2WT_", 9),
   rep("20250228 plate2_well5E_20mM_cl622_IRAK4K213-214A_IRAK2WT_00", 7),
-  rep("20230304 plate2_well2F_20mM_cl622_IRAK4K213-214A_IRAK2WT_", 9),
   rep("20250314 plate2_well9E_40mM_cl622_IRAK4K213-214A_IRAK2WT_", 15),
-  rep("20250325 plate2_well5G_40mM_cl622_IRAK4K213-214A_IRAK2WT_001", 2),
   rep("20250325 plate2_well5G_40mM_cl622_IRAK4K213-214A_IRAK2WT_002", 12),
   rep("20250328 plate1_well3D_20mM_cl622_IRAK4K213-214A_IRAK2WT_001", 4)
 )
@@ -72,9 +70,7 @@ image_values <- c(
 cell_values <- c(
   4, 6, 10, 11, 15, 16, 18, 19, 20,
   4, 8, 9, 14, 27, 28, 29,
-  4, 9, 10, 15, 17, 18, 25, 31, 34,
   3, 4, 6, 7, 8, 11, 12, 16, 17, 18, 19, 21, 22, 23, 24,
-  24, 25,
   1, 2, 3, 5, 7, 10, 11, 12, 13, 14, 15, 16,
   1, 2, 7, 10
 )

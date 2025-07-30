@@ -123,7 +123,9 @@ rm(
   LOWER_LIMIT,
   UPPER_LIMIT,
   LOWER_LIMIT_AXIS_TICKS,
-  ScriptList
+  X_AXIS_INTERVAL,
+  ScriptList,
+  x
 )
 
 # Cleanup -----------------------------------------------------------------
