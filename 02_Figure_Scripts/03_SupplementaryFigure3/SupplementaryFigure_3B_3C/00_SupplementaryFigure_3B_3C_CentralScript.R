@@ -42,7 +42,7 @@ if(!file.exists(Plot_Directory_Path)){
 }
 
 # Creating Folder to save Images
-Plot_Directory_Path <- file.path(Plot_Directory_Path, "03_SupplementaryFigure_3B_3C")
+Plot_Directory_Path <- file.path(Plot_Directory_Path, "SupplementaryFigure_3B_3C")
 if(!file.exists(Plot_Directory_Path)){
   dir.create(Plot_Directory_Path)
 }

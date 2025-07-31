@@ -47,7 +47,7 @@ Plot_ColocalisationPercentage <- function(Colocalisation_Percentage_byCell, Colo
       ),
       size = 0.1
     ) +
-    # Mean of Colocalisation percentage for 2nd Cohort
+    # Mean of Colocalisation percentage for 3rd Cohort
     geom_segment(
       aes(
         y = 2.95, 
