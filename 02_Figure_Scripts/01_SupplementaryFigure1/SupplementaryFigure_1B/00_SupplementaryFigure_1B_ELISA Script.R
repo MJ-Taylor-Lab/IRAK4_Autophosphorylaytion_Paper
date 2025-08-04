@@ -286,19 +286,30 @@ ggsave(
 
 # Calculate the mean IL-2 concentration for each condition and replicate.
 FoldChangeSummary_Replicates <- Processed_Table %>%
-  group_by(Treatment_Condition_short, Sample_Day, Stimulation_Condition) %>%
-  summarise(IL_conc_mean = mean(IL_conc_Estimation), .groups = 'drop') %>%
+  group_by(
+    Treatment_Condition_short, 
+    Sample_Day, 
+    Stimulation_Condition
+  ) %>%
+  summarise(
+    IL_conc_mean = mean(IL_conc_Estimation), 
+    .groups = 'drop'
+  ) %>%
   # Reshape data so 'Stimulated' and 'Unstimulated' are columns.
   pivot_wider(
     names_from = Stimulation_Condition,
     values_from = IL_conc_mean
   ) %>%
   # Calculate the fold change.
-  mutate(Fold_Change = Stimulated / Unstimulated)
+  mutate(
+    Fold_Change = Stimulated / Unstimulated
+  )
 
 # Summarize the fold change data across all replicates for the bar plot.
 FoldChangeSummary_Overall <- FoldChangeSummary_Replicates %>%
-  group_by(Treatment_Condition_short) %>%
+  group_by(
+    Treatment_Condition_short
+  ) %>%
   summarise(
     Mean_Fold_Change = mean(Fold_Change, na.rm = TRUE),
     SD_Fold_Change = sd(Fold_Change, na.rm = TRUE),
